@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Portafolio de proyectos con IA de Nicolás Concha">
-<title>Nicolás Concha Portfolio</title>
+<meta name="description" content="Nicolás Concha: AI portfolio">
+<title>Nicolás Concha AI Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600&display=swap">
@@ -17,7 +17,9 @@
   --muted: #6B7C90;
   --rule: #D5DCE4;
   --rule-soft: #E8EDF2;
-  --tint: #F3F6F9;
+  --tint: #EEF4FC;
+  --accent: #1D5FD1;
+  --accent-soft: #D6E4F8;
   --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
   --sans: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
   color-scheme: light;
@@ -27,26 +29,29 @@ html, body { background: var(--paper); }
 body { color: var(--ink); font-family: var(--sans); font-size: 16.5px; line-height: 1.6; }
 .wrap { max-width: 1040px; margin: 0 auto; padding-inline: clamp(16px, 5vw, 56px); padding-block: 36px 72px; }
 a { color: var(--ink); }
-a:focus-visible, button:focus-visible { outline: 2px solid var(--ink-2); outline-offset: 3px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
-.top { display: flex; justify-content: space-between; align-items: center; gap: 12px 24px; flex-wrap: wrap; border-bottom: 2px solid var(--ink); padding-bottom: 14px; }
+.top { display: flex; justify-content: space-between; align-items: center; gap: 12px 24px; flex-wrap: wrap; border-bottom: 3px solid var(--accent); padding-bottom: 14px; }
 .mark { font-weight: 600; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; }
 .top-right { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
 .top nav { display: flex; gap: 20px; flex-wrap: wrap; font-size: 14.5px; }
 .top nav a { color: var(--ink-2); text-decoration: none; }
-.top nav a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+.top nav a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
 .lang { display: inline-flex; gap: 2px; font-size: 13px; font-weight: 600; letter-spacing: .06em; }
 .lang button { font: inherit; border: 0; background: none; color: var(--muted); padding: 4px 6px; cursor: pointer; }
-.lang button[aria-pressed="true"] { color: var(--ink); border-bottom: 2px solid var(--ink); }
+.lang button[aria-pressed="true"] { color: var(--accent); border-bottom: 2px solid var(--accent); }
 
+h1 .dot { color: var(--accent); }
 h1 { font-family: var(--serif); font-weight: 700; font-size: clamp(2.3rem, 5.4vw, 3.5rem); line-height: 1.05; letter-spacing: -.01em; margin: 44px 0 12px; text-wrap: balance; }
-.lede { font-size: 1.2rem; color: var(--ink-2); max-width: 58ch; margin: 0 0 28px; }
+.lede { font-size: 1.2rem; color: var(--ink-2); max-width: 58ch; margin: 0; }
 .creds { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 .creds div { padding: 14px 18px 14px 0; font-size: 15px; min-width: 0; }
 .creds small { display: block; color: var(--muted); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 3px; }
 
-section { scroll-margin-top: 20px; margin-top: 64px; }
-.sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-bottom: 1px solid var(--ink); padding-bottom: 8px; margin-bottom: 4px; }
+section { scroll-margin-top: 20px; margin-top: 56px; }
+section:has(> details.other) { margin-top: 28px; }
+#mba { margin-top: 56px !important; }
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-bottom: 2px solid var(--accent); padding-bottom: 8px; margin-bottom: 4px; }
 h2 { font-family: var(--serif); font-weight: 600; font-size: 1.6rem; margin: 0; }
 .sec-head span { color: var(--muted); font-size: 14.5px; }
 
@@ -54,7 +59,7 @@ h2 { font-family: var(--serif); font-weight: 600; font-size: 1.6rem; margin: 0; 
 .meta { display: grid; gap: 6px; align-content: start; }
 .meta h3 { font-family: var(--serif); font-weight: 700; font-size: 1.65rem; line-height: 1.1; margin: 0; }
 .meta .st { font-size: 13px; color: var(--ink-2); line-height: 1.4; }
-.meta .st::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--ink-2); margin-right: 7px; vertical-align: 1px; }
+.meta .st::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-right: 7px; vertical-align: 1px; }
 .meta .st.sim::before { background: transparent; border: 1.5px solid var(--ink-2); }
 .body { min-width: 0; display: grid; gap: 14px; }
 .summary { margin: 0; font-size: 1.08rem; max-width: 62ch; }
@@ -63,8 +68,8 @@ h2 { font-family: var(--serif); font-weight: 600; font-size: 1.6rem; margin: 0; 
 .kpis b { display: block; font-family: var(--serif); font-weight: 700; font-size: 1.75rem; line-height: 1.15; color: var(--ink); font-variant-numeric: tabular-nums; }
 .body ul { margin: 0; padding-left: 1.05em; display: grid; gap: 5px; max-width: 66ch; }
 .body li::marker { color: var(--muted); }
-.ai { background: var(--tint); padding: 12px 16px; max-width: 70ch; }
-.ai small { display: block; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+.ai { background: var(--tint); border-left: 3px solid var(--accent); padding: 12px 16px; max-width: 70ch; }
+.ai small { display: block; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 2px; }
 .ai p { margin: 0; }
 .tech { font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--rule-soft); padding-top: 10px; }
 
@@ -78,7 +83,45 @@ table { border-collapse: collapse; width: 100%; min-width: 520px; }
 th, td { text-align: left; padding: 14px 16px 14px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
 th { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; width: 28%; }
 
-footer { margin-top: 64px; padding-top: 16px; border-top: 2px solid var(--ink); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; color: var(--muted); font-size: 14px; }
+footer { margin-top: 64px; padding-top: 16px; border-top: 3px solid var(--accent); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; color: var(--muted); font-size: 14px; }
+
+
+/* Landing: cuadrícula de fichas resumidas */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 0; }
+.cardp { display: grid; gap: 10px; align-content: start; padding: 24px 24px 26px 0; border-bottom: 1px solid var(--rule); text-decoration: none; color: var(--ink); min-width: 0; }
+.cardp .cat { font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.cardp h3 { font-family: var(--serif); font-weight: 700; font-size: 1.45rem; margin: 0; line-height: 1.15; }
+.cardp p { margin: 0; color: var(--ink-2); }
+.cardp .kpis b { font-size: 1.35rem; }
+.cardp .more { font-size: 14px; font-weight: 600; color: var(--accent); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+.cardp:hover h3, .cardp:focus-visible h3 { text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 1.5px; }
+.cardp:focus-visible { outline: 2px solid var(--ink-2); outline-offset: 2px; }
+.other + * {} .strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 32px; }
+.strip div { padding: 18px 0; border-bottom: 1px solid var(--rule); min-width: 0; }
+.strip b { display: block; font-family: var(--serif); font-size: 1.05rem; margin-bottom: 4px; }
+.strip span { color: var(--ink-2); font-size: 15px; }
+.toolsline { color: var(--ink-2); font-size: 15px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+
+.other summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+.other summary::-webkit-details-marker { display: none; }
+.other .sum-t { font-family: var(--serif); font-weight: 600; font-size: 1.6rem; }
+.other .sum-t::after { content: "+"; display: inline-block; margin-left: 12px; font-family: var(--sans); font-weight: 400; color: var(--accent); }
+.other[open] .sum-t::after { content: "−"; }
+.other .sum-s { color: var(--muted); font-size: 14.5px; }
+.other summary:hover .sum-t { text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 1.5px; }
+.other summary:focus-visible { outline: 2px solid var(--ink-2); outline-offset: 3px; }
+#metodo .strip { grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); }
+/* Detalle */
+.back { display: inline-block; margin-top: 36px; font-size: 14.5px; font-weight: 600; color: var(--accent); text-decoration: none; }
+.back:hover { text-decoration: underline; text-underline-offset: 4px; }
+.detail-head { margin-top: 18px; border-bottom: 3px solid var(--accent); padding-bottom: 16px; display: grid; gap: 8px; }
+.detail-head .cat { font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.detail-head h2 { font-size: clamp(2rem, 4.5vw, 2.8rem); font-weight: 700; }
+.detail-body { display: grid; gap: 18px; padding-top: 24px; max-width: 760px; }
+.pager { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 14.5px; }
+.pager a { color: var(--accent); text-decoration: none; font-weight: 600; }
+.pager a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.pager small { display: block; color: var(--muted); font-weight: 400; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; }
 
 @media (max-width: 680px) {
   .proj { grid-template-columns: minmax(0, 1fr); gap: 12px; }
@@ -97,18 +140,15 @@ footer { margin-top: 64px; padding-top: 16px; border-top: 2px solid var(--ink); 
       <div class="top-right">
         <nav aria-label="Secciones" id="nav"></nav>
         <div class="lang" role="group" aria-label="Idioma / Language">
-          <button type="button" id="btn-es" data-lang="es" aria-pressed="true">ES</button>
-          <button type="button" id="btn-en" data-lang="en" aria-pressed="false">EN</button>
+          <button type="button" id="btn-es" data-lang="es" aria-pressed="false">ES</button>
+          <button type="button" id="btn-en" data-lang="en" aria-pressed="true">EN</button>
         </div>
       </div>
     </div>
-    <h1 data-i="h1">Finanzas, riesgo y producto digital</h1>
-    <p class="lede" data-i="lede">Construyo herramientas con IA para decidir mejor con datos. Defino el problema, diseño cómo debe funcionar y reviso cada resultado; el código lo escribo junto a Claude Code.</p>
-    <div class="creds">
-      <div><small data-i="c1t">Formación</small><span data-i="c1">IMBA, IE Business School · Finance Concentration</span></div>
-      <div><small data-i="c2t">Experiencia</small><span data-i="c2">Riesgo de crédito, Banco BICE</span></div>
-      <div><small data-i="c3t">Experiencia</small><span data-i="c3">Key Account Manager, Toyota (Chile y Argentina)</span></div>
-    </div>
+    <div id="hero"><h1 data-i="h1">AI Portfolio</h1>
+    <p class="lede" data-i="lede">AI tools I designed and built to solve real problems in finance, retail and education.</p>
+
+  </div>
   </header>
 
   <main id="main"></main>
@@ -122,8 +162,8 @@ footer { margin-top: 64px; padding-top: 16px; border-top: 2px solid var(--ink); 
 <script>
 const UI = {
   es: {
-    h1: "Finanzas, riesgo y producto digital",
-    lede: "Construyo herramientas con IA para decidir mejor con datos. Defino el problema, diseño cómo debe funcionar y reviso cada resultado; el código lo escribo junto a Claude Code.",
+    h1: "Portafolio de IA",
+    lede: "Herramientas con IA que diseñé y construí para resolver problemas reales en finanzas, retail y educación.",
     c1t: "Formación", c1: "IMBA, IE Business School · Finance Concentration",
     c2t: "Experiencia", c2: "Riesgo de crédito, Banco BICE",
     c3t: "Experiencia", c3: "Key Account Manager, Toyota (Chile y Argentina)",
@@ -132,8 +172,8 @@ const UI = {
     nav: { productos: "Productos", finanzas: "Finanzas", estudio: "Estudio", mba: "IMBA", stack: "Herramientas" }
   },
   en: {
-    h1: "Finance, risk and digital product",
-    lede: "I build AI tools to make better decisions with data. I define the problem, design how it should work and review every output; I write the code together with Claude Code.",
+    h1: "AI Portfolio",
+    lede: "AI tools I designed and built to solve real problems in finance, retail and education.",
     c1t: "Education", c1: "IMBA, IE Business School · Finance Concentration",
     c2t: "Experience", c2: "Credit risk, Banco BICE",
     c3t: "Experience", c3: "Key Account Manager, Toyota (Chile and Argentina)",
@@ -159,6 +199,7 @@ const SECTIONS = [
     items: [
       {
         kpis: [{n:"18",es:"pantallas",en:"screens"},{n:"37",es:"endpoints de API",en:"API endpoints"},{n:"147",es:"commits",en:"commits"}],
+        slug: "lista", short: { es: "Una app compartida donde la IA lee los tickets del supermercado y ayuda a los hogares a controlar su gasto.", en: "A shared grocery app where AI reads supermarket receipts and helps households control spending." },
         name: "Lista", status: "prod",
         summary: { es: "App colaborativa de compras y presupuesto para hogares, con IA que lee tickets de supermercado y un asistente que ayuda a planificar el gasto.", en: "Collaborative grocery and budget app for households, with AI that reads supermarket receipts and an assistant that helps plan spending." },
         points: {
@@ -170,6 +211,7 @@ const SECTIONS = [
       },
       {
         kpis: [{n:"5",es:"agentes de IA",en:"AI agents"},{n:"7",es:"etapas de seguimiento",en:"pipeline stages"},{n:"3",es:"APIs externas",en:"external APIs"}],
+        slug: "patronato", short: { es: "Cinco agentes de IA que buscan, verifican y contactan posibles donantes para una fundación.", en: "Five AI agents that find, verify and contact potential donors for a foundation." },
         name: "Patronato", status: "mvp",
         summary: { es: "Plataforma de prospección de donantes y aliados para una fundación chilena.", en: "Donor and partner prospecting platform for a Chilean foundation." },
         points: {
@@ -181,6 +223,7 @@ const SECTIONS = [
       },
       {
         kpis: [{n:"883 → 126 KB",es:"carga inicial",en:"initial load"},{n:"27",es:"componentes",en:"components"}],
+        slug: "artesano", short: { es: "El artesano saca una foto y la IA arma la publicación y su tienda en línea.", en: "Artisans take a photo; AI writes the listing and sets up their online store." },
         name: "Artesano", status: "mvp",
         summary: { es: "E-commerce para artesanos latinoamericanos sin experiencia digital: sacan una foto y la app arma la publicación.", en: "E-commerce for Latin American artisans with no digital experience: they take a photo and the app builds the listing." },
         points: {
@@ -199,6 +242,7 @@ const SECTIONS = [
     items: [
       {
         kpis: [{n:"6",es:"conectores de datos",en:"data connectors"},{n:"3",es:"monedas en vivo",en:"live currencies"}],
+        slug: "patrimonio", short: { es: "Un solo dashboard para gastos e inversiones, alimentado por cartolas y correos del banco.", en: "One dashboard for spending and investments, fed by bank statements and emails." },
         name: "Patrimonio", status: "live",
         summary: { es: "Dashboard personal que consolida gastos e inversiones de distintas fuentes en una sola vista.", en: "Personal dashboard that consolidates spending and investments from several sources into one view." },
         points: {
@@ -210,6 +254,7 @@ const SECTIONS = [
       },
       {
         kpis: [{n:"11",es:"agentes de señal",en:"signal agents"},{n:"441",es:"tests automatizados",en:"automated tests"}],
+        slug: "trading-bot", short: { es: "Once agentes proponen operaciones y un cortafuegos de riesgo fijo decide.", en: "Eleven agents propose trades; a fixed risk firewall decides." },
         name: "Trading bot", status: "sim",
         summary: { es: "Sistema de trading multiagente con un cortafuegos de riesgo que ninguna señal puede saltarse.", en: "Multi-agent trading system with a risk firewall that no signal can override." },
         points: {
@@ -228,6 +273,7 @@ const SECTIONS = [
     items: [
       {
         kpis: [{n:"12–15",es:"preguntas por clase",en:"questions per class"},{n:"4",es:"APIs integradas",en:"integrated APIs"}],
+        slug: "repaso", short: { es: "Convierte las transcripciones de mis clases en quizzes diarios con repetición espaciada.", en: "Turns my class transcripts into daily spaced-repetition quizzes." },
         name: "Repaso", status: "prod",
         summary: { es: "App de repaso diario tipo Duolingo que convierte las transcripciones de mis clases del MBA en preguntas de práctica.", en: "Duolingo-style daily review app that turns my MBA class transcripts into practice questions." },
         points: {
@@ -236,16 +282,6 @@ const SECTIONS = [
         },
         ai: { es: "Gemini con salida JSON estructurada y modelos de respaldo; además mantiene una memoria acumulada de cada curso para que las preguntas se conecten entre clases.", en: "Gemini with structured JSON output and fallback models; it also keeps a running memory of each course so questions connect across classes." },
         stack: ["Next.js", "TypeScript", "Supabase (RLS)", "Gemini API", "Jamie API", "Telegram (grammY)", "Web Push", "Vercel Cron"]
-      },
-      {
-        name: "Claude Reader", status: "live",
-        summary: { es: "Extensión de Chrome para resumir, sacar puntos clave o traducir cualquier página web.", en: "Chrome extension to summarize, pull key points from or translate any web page." },
-        points: {
-          es: ["Funciona sobre la página completa o solo sobre el texto seleccionado", "Guarda un historial de resultados"],
-          en: ["Works on the full page or only on selected text", "Keeps a history of results"]
-        },
-        ai: { es: "Llamadas a la API de Claude desde la extensión, con la clave guardada localmente.", en: "Claude API calls from the extension, with the key stored locally." },
-        stack: ["JavaScript", "Chrome Manifest V3", "Claude API"]
       }
     ]
   }
@@ -268,6 +304,7 @@ const METHOD = {
   items: [
     { t: { es: "Reglas de seguridad propias", en: "My own security rules" }, d: { es: "Un protocolo que se aplica en todos mis proyectos: nada de claves en el código, permiso explícito antes de enviar correos o borrar archivos, y avisos de riesgo.", en: "A protocol applied across all my projects: no keys in code, explicit approval before sending emails or deleting files, and risk warnings." } },
     { t: { es: "Skills a medida", en: "Custom skills" }, d: { es: "Instrucciones reutilizables para análisis de casos, proyectos grupales, planificación de entregas, comunicación como delegado de curso y para escribir con mi propia voz.", en: "Reusable instructions for case analysis, group projects, deadline planning, class rep communication and writing in my own voice." } },
+    { t: { es: "Cómo construyo", en: "How I build" }, d: { es: "Defino el problema, diseño cómo debe funcionar y reviso cada resultado. El código lo escribo con Claude Code.", en: "I define the problem, design how it should work and review every output. I write the code with Claude Code." } },
     { t: { es: "Verificar antes de usar", en: "Verify before use" }, d: { es: "Cifras con fuente, agentes que no pueden inventar datos y revisión humana antes de cualquier decisión.", en: "Figures with a source, agents that cannot invent data, and human review before any decision." } }
   ]
 };
@@ -283,43 +320,68 @@ const TOOLS = [
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]); }
 function pick(v, l) { return (v && typeof v === "object") ? v[l] : v; }
 
+let LANG = "en";
+const ALL = SECTIONS.flatMap(sec => sec.items.map(p => ({ ...p, cat: sec.title })));
+const L = {
+  es: { projects: "Proyectos", projIntro: "Resumen de cada proyecto. Entra a cualquiera para ver el detalle.", more: "Ver detalle", back: "← Todos los proyectos", prev: "Anterior", next: "Siguiente", how: "Cómo trabajo con IA", mba: "IA aplicada en el IMBA", other: "Otros trabajos", howSub: "Seguridad, skills y verificación", toolsSub: "Modelos de IA, APIs y desarrollo", tools: "Herramientas" },
+  en: { projects: "Projects", projIntro: "A summary of each project. Open any of them for the details.", more: "View details", back: "← All projects", prev: "Previous", next: "Next", how: "How I work with AI", mba: "AI applied in the IMBA", other: "Other work", howSub: "Security, skills and verification", toolsSub: "AI models, APIs and development", tools: "Tools" }
+};
+
+function kpiHtml(p, lang, n) { return p.kpis ? `<div class="kpis">${p.kpis.slice(0, n).map(k => `<div><b>${esc(k.n)}</b>${esc(k[lang])}</div>`).join("")}</div>` : ""; }
+
+function landing(lang) {
+  const T = UI[lang], X = L[lang];
+  let h = `<section id="projects"><div class="sec-head"><h2>${X.projects}</h2><span>${X.projIntro}</span></div><div class="grid">`;
+  ALL.forEach(p => {
+    h += `<a class="cardp" href="#p-${p.slug}"><span class="cat">${esc(STATUS[p.status][lang])}</span><h3>${esc(pick(p.name, lang))}</h3><p>${esc(p.short[lang])}</p>${kpiHtml(p, lang, 2)}<span class="more">${X.more} →</span></a>`;
+  });
+  h += `</div></section>`;
+  h += `<section id="mba"><details class="other"><summary><span class="sum-t">${X.other}</span><span class="sum-s">${X.mba} · ${MBA.items.length}</span></summary><div class="strip">` + MBA.items.map(i => `<div><b>${esc(i.t[lang])}</b><span>${esc(i.d[lang])}</span></div>`).join("") + `</div></details></section>`;
+  h += `<section id="metodo"><details class="other"><summary><span class="sum-t">${X.how}</span><span class="sum-s">${X.howSub}</span></summary><div class="strip">` + METHOD.items.map(i => `<div><b>${esc(i.t[lang])}</b><span>${esc(i.d[lang])}</span></div>`).join("") + `</div></details></section>`;
+  h += `<section id="stack"><details class="other"><summary><span class="sum-t">${X.tools}</span><span class="sum-s">${X.toolsSub}</span></summary><div class="tools"><table><tbody>` + TOOLS.map(r => `<tr><th scope="row">${esc(r.k[lang])}</th><td>${esc(r.v[lang])}</td></tr>`).join("") + `</tbody></table></div></details></section>`;
+  return h;
+}
+
+function detail(p, lang) {
+  const T = UI[lang], X = L[lang];
+  const idx = ALL.indexOf(p), prev = ALL[(idx - 1 + ALL.length) % ALL.length], next = ALL[(idx + 1) % ALL.length];
+  return `<a class="back" href="#projects">${X.back}</a>
+    <div class="detail-head"><span class="cat">${esc(p.cat[lang])} · ${esc(STATUS[p.status][lang])}</span><h2>${esc(pick(p.name, lang))}</h2></div>
+    <div class="detail-body"><p class="summary">${esc(p.summary[lang])}</p>${kpiHtml(p, lang, 9)}
+    <ul>${p.points[lang].map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+    <div class="ai"><small>${esc(T.aiLabel)}</small><p>${esc(p.ai[lang])}</p></div>
+    <div class="tech">${esc(T.techLabel)}: ${p.stack.map(x => esc(pick(x, lang))).join(" · ")}</div></div>
+    <nav class="pager" aria-label="${X.projects}"><a href="#p-${prev.slug}"><small>${X.prev}</small>${esc(pick(prev.name, lang))}</a><a href="#p-${next.slug}" style="text-align:right"><small>${X.next}</small>${esc(pick(next.name, lang))}</a></nav>`;
+}
+
 function render(lang) {
+  LANG = lang;
   const T = UI[lang];
   document.documentElement.lang = lang;
   document.querySelectorAll("[data-i]").forEach(n => { n.textContent = T[n.dataset.i]; });
-  document.getElementById("nav").innerHTML = Object.entries(T.nav).map(([id, t]) => `<a href="#${id}">${esc(t)}</a>`).join("");
-
-  let h = "";
-  SECTIONS.forEach(s => {
-    h += `<section id="${s.id}"><div class="sec-head"><h2>${esc(s.title[lang])}</h2><span>${esc(s.intro[lang])}</span></div>`;
-    s.items.forEach(p => {
-      h += `<article class="proj"><div class="meta"><h3>${esc(pick(p.name, lang))}</h3><span class="st ${p.status === "sim" ? "sim" : ""}">${esc(STATUS[p.status][lang])}</span></div><div class="body">` +
-        `<p class="summary">${esc(p.summary[lang])}</p>` +
-        (p.kpis ? `<div class="kpis">${p.kpis.map(k => `<div><b>${esc(k.n)}</b>${esc(k[lang])}</div>`).join("")}</div>` : "") +
-        `<ul>${p.points[lang].map(x => `<li>${esc(x)}</li>`).join("")}</ul>` +
-        `<div class="ai"><small>${esc(T.aiLabel)}</small><p>${esc(p.ai[lang])}</p></div>` +
-        `<div class="tech">${esc(T.techLabel)}: ${p.stack.map(x => esc(pick(x, lang))).join(" · ")}</div></div></article>`;
-    });
-    h += `</section>`;
-  });
-  h += `<section id="mba"><div class="sec-head"><h2>${esc(MBA.title[lang])}</h2><span>${esc(MBA.intro[lang])}</span></div><div class="two">` +
-    MBA.items.map(i => `<article><h3>${esc(i.t[lang])}</h3><p>${esc(i.d[lang])}</p></article>`).join("") + `</div></section>`;
-  h += `<section id="metodo"><div class="sec-head"><h2>${esc(METHOD.title[lang])}</h2></div><div class="two">` +
-    METHOD.items.map(i => `<article><h3>${esc(i.t[lang])}</h3><p>${esc(i.d[lang])}</p></article>`).join("") + `</div></section>`;
-  h += `<section id="stack"><div class="sec-head"><h2>${lang === "es" ? "Herramientas" : "Tools"}</h2></div><div class="tools"><table><tbody>` +
-    TOOLS.map(r => `<tr><th scope="row">${esc(r.k[lang])}</th><td>${esc(r.v[lang])}</td></tr>`).join("") + `</tbody></table></div></section>`;
-  document.getElementById("main").innerHTML = h;
-
+  const navItems = lang === "es" ? [["projects", "Proyectos"], ["mba", "Otros"], ["metodo", "Cómo trabajo"], ["stack", "Herramientas"]] : [["projects", "Projects"], ["mba", "Other"], ["metodo", "How I work"], ["stack", "Tools"]];
+  document.getElementById("nav").innerHTML = navItems.map(([id, t]) => `<a href="#${id}">${t}</a>`).join("");
+  const m = location.hash.match(/^#p-(.+)$/);
+  const p = m && ALL.find(x => x.slug === m[1]);
+  document.getElementById("hero").hidden = !!p;
+  document.getElementById("main").innerHTML = p ? detail(p, lang) : landing(lang);
   document.getElementById("btn-es").setAttribute("aria-pressed", lang === "es");
   document.getElementById("btn-en").setAttribute("aria-pressed", lang === "en");
-  try { localStorage.setItem("pf_lang", lang); } catch (e) {}
+  return !!p;
 }
 
-let start = "es";
-if (location.hash === "#en") start = "en";
-else { try { const v = localStorage.getItem("pf_lang"); if (v === "en" || v === "es") start = v; } catch (e) {} }
+window.addEventListener("hashchange", () => {
+  const isDetail = render(LANG);
+  const h = location.hash.slice(1);
+  if (isDetail) window.scrollTo(0, 0);
+  else if (h) { const t = document.getElementById(h); if (t) { const d = t.querySelector('details'); if (d) d.open = true; t.scrollIntoView(); } }
+});
+
+let start = "en";
+if (location.hash === "#es") start = "es";
 document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click", () => render(b.dataset.lang)));
 render(start);
+if (location.hash && !location.hash.startsWith("#p-")) { const t = document.getElementById(location.hash.slice(1)); if (t) t.scrollIntoView(); }
 </script>
 
 </body>
