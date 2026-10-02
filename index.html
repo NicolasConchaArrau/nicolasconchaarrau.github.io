@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Portafolio de proyectos con IA de Nicolás Concha">
+<title>Nicolás Concha Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600&display=swap">
+<style>
+/* Layout: informe de banca — cabecera con regla gruesa, credenciales en fila, cada proyecto como una fila de informe: ficha a la izquierda, contenido y cifras a la derecha. Estilo blanco elegido a propósito (un solo tema). */
+:root {
+  --paper: #FFFFFF;
+  --ink: #10223A;
+  --ink-2: #34506F;
+  --muted: #6B7C90;
+  --rule: #D5DCE4;
+  --rule-soft: #E8EDF2;
+  --tint: #F3F6F9;
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --sans: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--paper); }
+body { color: var(--ink); font-family: var(--sans); font-size: 16.5px; line-height: 1.6; }
+.wrap { max-width: 1040px; margin: 0 auto; padding-inline: clamp(16px, 5vw, 56px); padding-block: 36px 72px; }
+a { color: var(--ink); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--ink-2); outline-offset: 3px; }
+
+.top { display: flex; justify-content: space-between; align-items: center; gap: 12px 24px; flex-wrap: wrap; border-bottom: 2px solid var(--ink); padding-bottom: 14px; }
+.mark { font-weight: 600; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; }
+.top-right { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.top nav { display: flex; gap: 20px; flex-wrap: wrap; font-size: 14.5px; }
+.top nav a { color: var(--ink-2); text-decoration: none; }
+.top nav a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+.lang { display: inline-flex; gap: 2px; font-size: 13px; font-weight: 600; letter-spacing: .06em; }
+.lang button { font: inherit; border: 0; background: none; color: var(--muted); padding: 4px 6px; cursor: pointer; }
+.lang button[aria-pressed="true"] { color: var(--ink); border-bottom: 2px solid var(--ink); }
+
+h1 { font-family: var(--serif); font-weight: 700; font-size: clamp(2.3rem, 5.4vw, 3.5rem); line-height: 1.05; letter-spacing: -.01em; margin: 44px 0 12px; text-wrap: balance; }
+.lede { font-size: 1.2rem; color: var(--ink-2); max-width: 58ch; margin: 0 0 28px; }
+.creds { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.creds div { padding: 14px 18px 14px 0; font-size: 15px; min-width: 0; }
+.creds small { display: block; color: var(--muted); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 3px; }
+
+section { scroll-margin-top: 20px; margin-top: 64px; }
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-bottom: 1px solid var(--ink); padding-bottom: 8px; margin-bottom: 4px; }
+h2 { font-family: var(--serif); font-weight: 600; font-size: 1.6rem; margin: 0; }
+.sec-head span { color: var(--muted); font-size: 14.5px; }
+
+.proj { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 32px; padding: 30px 0; border-bottom: 1px solid var(--rule); }
+.meta { display: grid; gap: 6px; align-content: start; }
+.meta h3 { font-family: var(--serif); font-weight: 700; font-size: 1.65rem; line-height: 1.1; margin: 0; }
+.meta .st { font-size: 13px; color: var(--ink-2); line-height: 1.4; }
+.meta .st::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--ink-2); margin-right: 7px; vertical-align: 1px; }
+.meta .st.sim::before { background: transparent; border: 1.5px solid var(--ink-2); }
+.body { min-width: 0; display: grid; gap: 14px; }
+.summary { margin: 0; font-size: 1.08rem; max-width: 62ch; }
+.kpis { display: flex; gap: 12px 36px; flex-wrap: wrap; }
+.kpis div { font-size: 13.5px; color: var(--muted); }
+.kpis b { display: block; font-family: var(--serif); font-weight: 700; font-size: 1.75rem; line-height: 1.15; color: var(--ink); font-variant-numeric: tabular-nums; }
+.body ul { margin: 0; padding-left: 1.05em; display: grid; gap: 5px; max-width: 66ch; }
+.body li::marker { color: var(--muted); }
+.ai { background: var(--tint); padding: 12px 16px; max-width: 70ch; }
+.ai small { display: block; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+.ai p { margin: 0; }
+.tech { font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--rule-soft); padding-top: 10px; }
+
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0 40px; }
+.two article { padding: 24px 0; border-bottom: 1px solid var(--rule); min-width: 0; }
+.two h3 { font-family: var(--serif); font-weight: 600; font-size: 1.2rem; margin: 0 0 6px; }
+.two p { margin: 0; color: var(--ink-2); }
+
+.tools { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; min-width: 520px; }
+th, td { text-align: left; padding: 14px 16px 14px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; width: 28%; }
+
+footer { margin-top: 64px; padding-top: 16px; border-top: 2px solid var(--ink); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; color: var(--muted); font-size: 14px; }
+
+@media (max-width: 680px) {
+  .proj { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .top nav { display: none; }
+}
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+</head>
+<body style="margin:0">
+
+
+<div class="wrap">
+  <header>
+    <div class="top">
+      <span class="mark">Nicolás Concha</span>
+      <div class="top-right">
+        <nav aria-label="Secciones" id="nav"></nav>
+        <div class="lang" role="group" aria-label="Idioma / Language">
+          <button type="button" id="btn-es" data-lang="es" aria-pressed="true">ES</button>
+          <button type="button" id="btn-en" data-lang="en" aria-pressed="false">EN</button>
+        </div>
+      </div>
+    </div>
+    <h1 data-i="h1">Finanzas, riesgo y producto digital</h1>
+    <p class="lede" data-i="lede">Construyo herramientas con IA para decidir mejor con datos. Defino el problema, diseño cómo debe funcionar y reviso cada resultado; el código lo escribo junto a Claude Code.</p>
+    <div class="creds">
+      <div><small data-i="c1t">Formación</small><span data-i="c1">IMBA, IE Business School · Finance Concentration</span></div>
+      <div><small data-i="c2t">Experiencia</small><span data-i="c2">Riesgo de crédito, Banco BICE</span></div>
+      <div><small data-i="c3t">Experiencia</small><span data-i="c3">Key Account Manager, Toyota (Chile y Argentina)</span></div>
+    </div>
+  </header>
+
+  <main id="main"></main>
+
+  <footer>
+    <span data-i="foot1">Actualizado en octubre de 2026</span>
+    <span data-i="foot2">Código, capturas y demos disponibles a pedido</span>
+  </footer>
+</div>
+
+<script>
+const UI = {
+  es: {
+    h1: "Finanzas, riesgo y producto digital",
+    lede: "Construyo herramientas con IA para decidir mejor con datos. Defino el problema, diseño cómo debe funcionar y reviso cada resultado; el código lo escribo junto a Claude Code.",
+    c1t: "Formación", c1: "IMBA, IE Business School · Finance Concentration",
+    c2t: "Experiencia", c2: "Riesgo de crédito, Banco BICE",
+    c3t: "Experiencia", c3: "Key Account Manager, Toyota (Chile y Argentina)",
+    foot1: "Actualizado en octubre de 2026", foot2: "Código, capturas y demos disponibles a pedido",
+    aiLabel: "Rol de la IA", techLabel: "Tecnología",
+    nav: { productos: "Productos", finanzas: "Finanzas", estudio: "Estudio", mba: "IMBA", stack: "Herramientas" }
+  },
+  en: {
+    h1: "Finance, risk and digital product",
+    lede: "I build AI tools to make better decisions with data. I define the problem, design how it should work and review every output; I write the code together with Claude Code.",
+    c1t: "Education", c1: "IMBA, IE Business School · Finance Concentration",
+    c2t: "Experience", c2: "Credit risk, Banco BICE",
+    c3t: "Experience", c3: "Key Account Manager, Toyota (Chile and Argentina)",
+    foot1: "Updated October 2026", foot2: "Code, screenshots and demos available on request",
+    aiLabel: "AI role", techLabel: "Technology",
+    nav: { productos: "Products", finanzas: "Finance", estudio: "Study", mba: "IMBA", stack: "Tools" }
+  }
+};
+
+const STATUS = {
+  prod: { es: "Lanzado con usuarios reales · 2026", en: "Launched with real users · 2026" },
+  live: { es: "Funcional · uso personal · 2026", en: "Working · personal use · 2026" },
+  mvp:  { es: "MVP funcional · 2026", en: "Working MVP · 2026" },
+  wip:  { es: "Prototipo · 2026", en: "Prototype · 2026" },
+  sim:  { es: "Backtesting y paper trading · 2026", en: "Backtesting and paper trading · 2026" }
+};
+
+const SECTIONS = [
+  {
+    id: "productos",
+    title: { es: "Productos y emprendimientos", en: "Products and ventures" },
+    intro: { es: "Proyectos pensados para usuarios reales, construidos junto al IMBA.", en: "Projects built for real users alongside the IMBA." },
+    items: [
+      {
+        kpis: [{n:"18",es:"pantallas",en:"screens"},{n:"37",es:"endpoints de API",en:"API endpoints"},{n:"147",es:"commits",en:"commits"}],
+        name: "Lista", status: "prod",
+        summary: { es: "App colaborativa de compras y presupuesto para hogares, con IA que lee tickets de supermercado y un asistente que ayuda a planificar el gasto.", en: "Collaborative grocery and budget app for households, with AI that reads supermarket receipts and an assistant that helps plan spending." },
+        points: {
+          es: ["Lista compartida en tiempo real entre los miembros de un hogar, con invitación por código", "Escaneo de tickets: extrae productos, precios y categorías de forma automática", "Asistente conversacional (Listo) que agrega o quita productos, crea listas y da consejos de gasto", "Presupuesto mensual y por categoría, comparación de canasta y puntaje de ahorro, en varias monedas", "Notificaciones push programadas y panel de administración", "Validación comercial: una empresa en Colombia mostró interés en sumarse al proyecto y ser cliente si los resultados eran positivos"],
+          en: ["Real-time shared list across household members, with invite codes", "Receipt scanning: automatically extracts products, prices and categories", "Conversational assistant (Listo) that adds or removes items, creates lists and gives spending tips", "Monthly and per-category budgets, basket comparison and savings score, in multiple currencies", "Scheduled push notifications and an admin panel", "Commercial validation: a company in Colombia expressed interest in joining the project and becoming a client if results were positive"]
+        },
+        ai: { es: "Gemini 2.5 Flash convierte el texto de un ticket en datos estructurados, con ejemplos reales de tickets españoles y manejo de errores (foto borrosa, no es un ticket, límite de uso). El asistente usa llamadas a funciones sobre la lista y búsqueda web.", en: "Gemini 2.5 Flash turns receipt text into structured data, using real Spanish receipt examples and error handling (blurry photo, not a receipt, quota limits). The assistant uses function calls on the list and web search." },
+        stack: ["Next.js", "React", "TypeScript", "Tailwind", "Supabase (Auth, Realtime, RLS)", "Gemini API", "Web Push", "Google Sheets API", "Vercel", "GitHub Actions"]
+      },
+      {
+        kpis: [{n:"5",es:"agentes de IA",en:"AI agents"},{n:"7",es:"etapas de seguimiento",en:"pipeline stages"},{n:"3",es:"APIs externas",en:"external APIs"}],
+        name: "Patronato", status: "mvp",
+        summary: { es: "Plataforma de prospección de donantes y aliados para una fundación chilena.", en: "Donor and partner prospecting platform for a Chilean foundation." },
+        points: {
+          es: ["Busca empresas y personas en la web según un criterio y un tipo de perfil", "Verifica cada prospecto (cargos desactualizados, personas fallecidas) y le asigna un puntaje de afinidad con la causa", "Encuentra datos de contacto públicos y redacta un primer mensaje personalizado", "Analiza el historial de donantes (importado en CSV) para proponer nuevos criterios de búsqueda", "Seguimiento de cada prospecto en un pipeline de 7 etapas, de identificado a ganado o perdido"],
+          en: ["Searches the web for companies and people by criteria and profile type", "Verifies each prospect (outdated roles, deceased people) and scores its fit with the cause", "Finds public contact details and drafts a personalized first message", "Analyzes past donors (imported from CSV) to suggest new search criteria", "Tracks each prospect through a 7-stage pipeline, from identified to won or lost"]
+        },
+        ai: { es: "Cinco agentes encadenados (búsqueda, verificación, contacto, redacción y análisis), con reglas explícitas para no inventar nombres ni datos que no estén en la fuente.", en: "Five chained agents (search, verification, contact, drafting and analysis), with explicit rules against inventing names or data not found in the source." },
+        stack: ["Next.js", "TypeScript", "Supabase", "Groq API (Llama 3.3 70B)", "Tavily API", "Resend API"]
+      },
+      {
+        kpis: [{n:"883 → 126 KB",es:"carga inicial",en:"initial load"},{n:"27",es:"componentes",en:"components"}],
+        name: "Artesano", status: "mvp",
+        summary: { es: "E-commerce para artesanos latinoamericanos sin experiencia digital: sacan una foto y la app arma la publicación.", en: "E-commerce for Latin American artisans with no digital experience: they take a photo and the app builds the listing." },
+        points: {
+          es: ["La IA analiza la foto del producto y redacta título, descripción, precio sugerido y etiquetas", "Quita el fondo de la imagen en el mismo navegador, sin enviarla a un servidor", "Tienda pública con búsqueda por voz, comparador de productos, carrito, checkout con envío por región y seguimiento de pedidos sin login", "Paneles para artesanos y administrador: pedidos, métricas, finanzas, carritos abandonados y registro de actividad", "Carga inicial reducida de 883 KB a 126 KB dividiendo el código en 6 bloques, y caché offline como PWA"],
+          en: ["AI analyzes the product photo and writes title, description, suggested price and tags", "Removes the image background in the browser, without sending it to a server", "Public store with voice search, product comparison, cart, checkout with regional shipping and login-free order tracking", "Artisan and admin panels: orders, metrics, finances, abandoned carts and activity log", "Initial load cut from 883 KB to 126 KB by splitting the code into 6 chunks, with offline caching as a PWA"]
+        },
+        ai: { es: "Claude Sonnet (API de Anthropic) analiza la foto y genera la ficha del producto; un modelo ONNX local quita el fondo.", en: "Claude Sonnet (Anthropic API) analyzes the photo and generates the listing; a local ONNX model removes the background." },
+        stack: ["React", "TypeScript", "Vite", "Tailwind", "Supabase", "Claude API", "ONNX Runtime Web", "Service Worker"]
+      },
+    ]
+  },
+  {
+    id: "finanzas",
+    title: { es: "Finanzas e inversión", en: "Finance and investing" },
+    intro: { es: "Donde se cruza mi experiencia en riesgo con la automatización.", en: "Where my risk background meets automation." },
+    items: [
+      {
+        kpis: [{n:"6",es:"conectores de datos",en:"data connectors"},{n:"3",es:"monedas en vivo",en:"live currencies"}],
+        name: "Patrimonio", status: "live",
+        summary: { es: "Dashboard personal que consolida gastos e inversiones de distintas fuentes en una sola vista.", en: "Personal dashboard that consolidates spending and investments from several sources into one view." },
+        points: {
+          es: ["Lee cartolas en PDF (incluso con contraseña), Excel y correos del banco vía las APIs de Gmail y Outlook", "Categoriza gastos con un clasificador propio y detecta suscripciones", "Valoriza inversiones con precios y tipos de cambio en vivo (CLP, USD, EUR)", "Presupuestos, inflación personal, proyección patrimonial a 12 meses y reportes en Excel y PDF"],
+          en: ["Reads PDF statements (including password-protected), Excel files and bank emails through the Gmail and Outlook APIs", "Categorizes spending with its own classifier and detects subscriptions", "Values investments with live prices and FX rates (CLP, USD, EUR)", "Budgets, personal inflation, 12-month net worth projection, and Excel and PDF reports"]
+        },
+        ai: { es: "El prototipo inicial usaba la API de Claude para interpretar correos de cualquier banco. La versión actual lo reemplaza por un clasificador de machine learning propio (TF-IDF y regresión logística), entrenado con mis transacciones: más barato y sin enviar datos bancarios a un servicio externo.", en: "The first prototype used the Claude API to read emails from any bank. The current version replaces it with my own machine learning classifier (TF-IDF and logistic regression), trained on my transactions: cheaper, and no bank data sent to an external service." },
+        stack: ["Python", "Streamlit", "pandas", "Plotly", "scikit-learn", { es: "Claude API (prototipo)", en: "Claude API (prototype)" }, "Gmail API", "Outlook API", "Playwright", "Yahoo Finance"]
+      },
+      {
+        kpis: [{n:"11",es:"agentes de señal",en:"signal agents"},{n:"441",es:"tests automatizados",en:"automated tests"}],
+        name: "Trading bot", status: "sim",
+        summary: { es: "Sistema de trading multiagente con un cortafuegos de riesgo que ninguna señal puede saltarse.", en: "Multi-agent trading system with a risk firewall that no signal can override." },
+        points: {
+          es: ["11 agentes de señal: técnico, momentum, reversión a la media, sentimiento, noticias, macro, fundamental, insiders, opciones, revisión de estimaciones y machine learning", "Límites de riesgo fijos en código: máximo de posiciones, stops según volatilidad (VIX), freno de emergencia y tamaño por criterio de Kelly", "Validación con backtest walk-forward, simulación Monte Carlo y optimización de parámetros", "Dashboard web, app de escritorio, alertas por Telegram y 441 tests automatizados"],
+          en: ["11 signal agents: technical, momentum, mean reversion, sentiment, news, macro, fundamental, insider, options, estimate revisions and machine learning", "Hard-coded risk limits: max positions, volatility-based stops (VIX), emergency halt and Kelly sizing", "Validated with walk-forward backtests, Monte Carlo simulation and parameter optimization", "Web dashboard, desktop app, Telegram alerts and 441 automated tests"]
+        },
+        ai: { es: "Agentes que votan con pesos que se recalibran según su desempeño; la decisión final siempre pasa por el cortafuegos de riesgo.", en: "Agents vote with weights recalibrated on their track record; every final decision passes through the risk firewall." },
+        stack: ["Python", "FastAPI", "HTMX", "Optuna", "scikit-learn", "Alpaca", "pytest"]
+      }
+    ]
+  },
+  {
+    id: "estudio",
+    title: { es: "Automatización del estudio", en: "Study automation" },
+    intro: { es: "Herramientas con IA que uso a diario en el MBA.", en: "AI tools I use daily in the MBA." },
+    items: [
+      {
+        kpis: [{n:"12–15",es:"preguntas por clase",en:"questions per class"},{n:"4",es:"APIs integradas",en:"integrated APIs"}],
+        name: "Repaso", status: "prod",
+        summary: { es: "App de repaso diario tipo Duolingo que convierte las transcripciones de mis clases del MBA en preguntas de práctica.", en: "Duolingo-style daily review app that turns my MBA class transcripts into practice questions." },
+        points: {
+          es: ["Descarga cada día las transcripciones desde la API de Jamie y genera de 12 a 15 preguntas por clase: alternativas, respuesta abierta, ejercicios numéricos, completar y síntesis", "Programa el repaso con repetición espaciada (FSRS, el mismo tipo de algoritmo que usa Anki)", "Suma lecturas y slides (PDF, PPTX, DOCX) procesados en el navegador", "Mini-exámenes acumulativos y estadísticas de temas débiles", "Recordatorio diario por notificación push y por bot de Telegram"],
+          en: ["Pulls transcripts daily from the Jamie API and generates 12 to 15 questions per class: multiple choice, open answer, numerical, fill-in and synthesis", "Schedules review with spaced repetition (FSRS, the same kind of algorithm Anki uses)", "Adds readings and slides (PDF, PPTX, DOCX) processed in the browser", "Cumulative mini-exams and weak-topic statistics", "Daily reminder via push notification and a Telegram bot"]
+        },
+        ai: { es: "Gemini con salida JSON estructurada y modelos de respaldo; además mantiene una memoria acumulada de cada curso para que las preguntas se conecten entre clases.", en: "Gemini with structured JSON output and fallback models; it also keeps a running memory of each course so questions connect across classes." },
+        stack: ["Next.js", "TypeScript", "Supabase (RLS)", "Gemini API", "Jamie API", "Telegram (grammY)", "Web Push", "Vercel Cron"]
+      },
+      {
+        name: "Claude Reader", status: "live",
+        summary: { es: "Extensión de Chrome para resumir, sacar puntos clave o traducir cualquier página web.", en: "Chrome extension to summarize, pull key points from or translate any web page." },
+        points: {
+          es: ["Funciona sobre la página completa o solo sobre el texto seleccionado", "Guarda un historial de resultados"],
+          en: ["Works on the full page or only on selected text", "Keeps a history of results"]
+        },
+        ai: { es: "Llamadas a la API de Claude desde la extensión, con la clave guardada localmente.", en: "Claude API calls from the extension, with the key stored locally." },
+        stack: ["JavaScript", "Chrome Manifest V3", "Claude API"]
+      }
+    ]
+  }
+];
+
+const MBA = {
+  id: "mba",
+  title: { es: "IA aplicada en el IMBA", en: "AI applied in the IMBA" },
+  intro: { es: "Trabajos de curso con APIs de datos y agentes de IA.", en: "Coursework using data APIs and AI agents." },
+  items: [
+    { t: { es: "Valoración de 10 empresas", en: "Valuation of 10 companies" }, d: { es: "Datos auditados extraídos de la SEC (XBRL) y de la CMF, múltiplos, crecimiento sostenible y pruebas de correlación, con fuente trazable para cada cifra.", en: "Audited data pulled from the SEC (XBRL) and Chile's CMF, multiples, sustainable growth and correlation tests, with a traceable source for every figure." } },
+    { t: { es: "Beer Distribution Game con agentes LLM", en: "Beer Distribution Game with LLM agents" }, d: { es: "Diseño experimental para aislar el efecto de compartir información sobre el efecto látigo en una cadena de suministro operada por agentes.", en: "Experimental design to isolate how information sharing affects the bullwhip effect in an agent-run supply chain." } }
+  ]
+};
+
+const METHOD = {
+  id: "metodo",
+  title: { es: "Cómo trabajo con IA", en: "How I work with AI" },
+  intro: { es: "", en: "" },
+  items: [
+    { t: { es: "Reglas de seguridad propias", en: "My own security rules" }, d: { es: "Un protocolo que se aplica en todos mis proyectos: nada de claves en el código, permiso explícito antes de enviar correos o borrar archivos, y avisos de riesgo.", en: "A protocol applied across all my projects: no keys in code, explicit approval before sending emails or deleting files, and risk warnings." } },
+    { t: { es: "Skills a medida", en: "Custom skills" }, d: { es: "Instrucciones reutilizables para análisis de casos, proyectos grupales, planificación de entregas, comunicación como delegado de curso y para escribir con mi propia voz.", en: "Reusable instructions for case analysis, group projects, deadline planning, class rep communication and writing in my own voice." } },
+    { t: { es: "Verificar antes de usar", en: "Verify before use" }, d: { es: "Cifras con fuente, agentes que no pueden inventar datos y revisión humana antes de cualquier decisión.", en: "Figures with a source, agents that cannot invent data, and human review before any decision." } }
+  ]
+};
+
+const TOOLS = [
+  { k: { es: "Modelos de IA", en: "AI models" }, v: { es: "Claude (API y Claude Code) · Gemini · Llama 3.3 vía Groq · modelos locales de visión · scikit-learn", en: "Claude (API and Claude Code) · Gemini · Llama 3.3 via Groq · local vision models · scikit-learn" } },
+  { k: { es: "Agentes y automatización", en: "Agents and automation" }, v: { es: "Pipelines multiagente · llamadas a funciones · Claude en Chrome · tareas programadas · bots de Telegram", en: "Multi-agent pipelines · function calling · Claude in Chrome · scheduled tasks · Telegram bots" } },
+  { k: { es: "APIs integradas", en: "Integrated APIs" }, v: { es: "Anthropic · Google Gemini · Google Sheets · Groq · Tavily · Gmail/IMAP · Outlook · Telegram · Resend · SEC EDGAR · Yahoo Finance · Alpaca · Jamie · Web Push", en: "Anthropic · Google Gemini · Google Sheets · Groq · Tavily · Gmail/IMAP · Outlook · Telegram · Resend · SEC EDGAR · Yahoo Finance · Alpaca · Jamie · Web Push" } },
+  { k: { es: "Desarrollo y despliegue", en: "Development and deployment" }, v: { es: "Python · TypeScript · React · Next.js · FastAPI · Streamlit · Supabase (Postgres) · Vercel y Vercel Cron · GitHub Actions · Git", en: "Python · TypeScript · React · Next.js · FastAPI · Streamlit · Supabase (Postgres) · Vercel and Vercel Cron · GitHub Actions · Git" } }
+];
+
+
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]); }
+function pick(v, l) { return (v && typeof v === "object") ? v[l] : v; }
+
+function render(lang) {
+  const T = UI[lang];
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i]").forEach(n => { n.textContent = T[n.dataset.i]; });
+  document.getElementById("nav").innerHTML = Object.entries(T.nav).map(([id, t]) => `<a href="#${id}">${esc(t)}</a>`).join("");
+
+  let h = "";
+  SECTIONS.forEach(s => {
+    h += `<section id="${s.id}"><div class="sec-head"><h2>${esc(s.title[lang])}</h2><span>${esc(s.intro[lang])}</span></div>`;
+    s.items.forEach(p => {
+      h += `<article class="proj"><div class="meta"><h3>${esc(pick(p.name, lang))}</h3><span class="st ${p.status === "sim" ? "sim" : ""}">${esc(STATUS[p.status][lang])}</span></div><div class="body">` +
+        `<p class="summary">${esc(p.summary[lang])}</p>` +
+        (p.kpis ? `<div class="kpis">${p.kpis.map(k => `<div><b>${esc(k.n)}</b>${esc(k[lang])}</div>`).join("")}</div>` : "") +
+        `<ul>${p.points[lang].map(x => `<li>${esc(x)}</li>`).join("")}</ul>` +
+        `<div class="ai"><small>${esc(T.aiLabel)}</small><p>${esc(p.ai[lang])}</p></div>` +
+        `<div class="tech">${esc(T.techLabel)}: ${p.stack.map(x => esc(pick(x, lang))).join(" · ")}</div></div></article>`;
+    });
+    h += `</section>`;
+  });
+  h += `<section id="mba"><div class="sec-head"><h2>${esc(MBA.title[lang])}</h2><span>${esc(MBA.intro[lang])}</span></div><div class="two">` +
+    MBA.items.map(i => `<article><h3>${esc(i.t[lang])}</h3><p>${esc(i.d[lang])}</p></article>`).join("") + `</div></section>`;
+  h += `<section id="metodo"><div class="sec-head"><h2>${esc(METHOD.title[lang])}</h2></div><div class="two">` +
+    METHOD.items.map(i => `<article><h3>${esc(i.t[lang])}</h3><p>${esc(i.d[lang])}</p></article>`).join("") + `</div></section>`;
+  h += `<section id="stack"><div class="sec-head"><h2>${lang === "es" ? "Herramientas" : "Tools"}</h2></div><div class="tools"><table><tbody>` +
+    TOOLS.map(r => `<tr><th scope="row">${esc(r.k[lang])}</th><td>${esc(r.v[lang])}</td></tr>`).join("") + `</tbody></table></div></section>`;
+  document.getElementById("main").innerHTML = h;
+
+  document.getElementById("btn-es").setAttribute("aria-pressed", lang === "es");
+  document.getElementById("btn-en").setAttribute("aria-pressed", lang === "en");
+  try { localStorage.setItem("pf_lang", lang); } catch (e) {}
+}
+
+let start = "es";
+if (location.hash === "#en") start = "en";
+else { try { const v = localStorage.getItem("pf_lang"); if (v === "en" || v === "es") start = v; } catch (e) {} }
+document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click", () => render(b.dataset.lang)));
+render(start);
+</script>
+
+</body>
+</html>
