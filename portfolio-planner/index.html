@@ -1,0 +1,1024 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex, nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Portfolio Planner</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* Layout: navy wealth header + darker action/tab bar (retail-banking app pattern), white working area with inputs rail on the left and tabbed outputs on the right */
+:root{
+  --navy:#12307a; --navy-2:#0c2259; --navy-ink:#ffffff; --navy-muted:#b9c8ee;
+  --accent:#1f56d6; --accent-soft:#e8eefc; --target:#c2185b;
+  --bg:#f5f7fb; --surface:#ffffff; --surface-2:#f0f3f9; --line:#dfe5f0;
+  --fg:#14213d; --fg-2:#45536f; --fg-3:#7383a0;
+  --good:#1f8a4c; --good-bg:#e5f4ea; --warn:#b26b00; --warn-bg:#fdf1dc; --bad:#c0392b; --bad-bg:#fbe7e4;
+  --c-lcg:#1f56d6; --c-lcv:#2a9bb5; --c-scg:#8fb0ee; --c-scv:#0e6f78; --c-intl:#7b5fc4; --c-em:#d9822b; --c-gold:#c9a227; --c-bond:#6b7a93; --c-hy:#5a9e2c;
+  --display:"Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --navy:#132a63; --navy-2:#0b1a42; --navy-ink:#ffffff; --navy-muted:#a9b9e4;
+  --accent:#6f9bff; --accent-soft:#1a2a52; --target:#ff5c9a;
+  --bg:#0b1222; --surface:#121b30; --surface-2:#18233c; --line:#26334f;
+  --fg:#e7edf8; --fg-2:#b2bfd8; --fg-3:#8392b0;
+  --good:#4cc47f; --good-bg:#12301f; --warn:#f0a63a; --warn-bg:#33240b; --bad:#ff7a6b; --bad-bg:#3a1714;
+  --c-lcg:#5b8cff; --c-lcv:#3fb6cf; --c-scg:#a8c2f5; --c-scv:#2aa3a8; --c-intl:#a48ae6; --c-em:#ef9a45; --c-gold:#e0bd45; --c-bond:#93a1b8; --c-hy:#78bf47;
+  color-scheme:dark; }}
+:root[data-theme="dark"]{
+  --navy:#132a63; --navy-2:#0b1a42; --navy-ink:#ffffff; --navy-muted:#a9b9e4;
+  --accent:#6f9bff; --accent-soft:#1a2a52; --target:#ff5c9a;
+  --bg:#0b1222; --surface:#121b30; --surface-2:#18233c; --line:#26334f;
+  --fg:#e7edf8; --fg-2:#b2bfd8; --fg-3:#8392b0;
+  --good:#4cc47f; --good-bg:#12301f; --warn:#f0a63a; --warn-bg:#33240b; --bad:#ff7a6b; --bad-bg:#3a1714;
+  --c-lcg:#5b8cff; --c-lcv:#3fb6cf; --c-scg:#a8c2f5; --c-scv:#2aa3a8; --c-intl:#a48ae6; --c-em:#ef9a45; --c-gold:#e0bd45; --c-bond:#93a1b8; --c-hy:#78bf47;
+  color-scheme:dark; }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px;line-height:1.5}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* Header */
+.hero{background:linear-gradient(180deg,var(--navy) 0%,var(--navy) 70%,#163a8f 100%);color:var(--navy-ink)}
+.hero .wrap{padding-block:22px 26px}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand-l{display:flex;align-items:center;gap:12px}
+.mark{width:40px;height:40px;border-radius:50%;background:#fff;color:var(--navy);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:14px}
+.brand h1{font-family:var(--display);font-size:17px;font-weight:700;margin:0;letter-spacing:.01em}
+.brand p{margin:0;color:var(--navy-muted);font-size:12.5px}
+.brand-r{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.themes{display:flex;gap:2px;padding:3px;border-radius:999px;background:rgba(255,255,255,.12)}
+.themes button{appearance:none;border:0;background:none;color:var(--navy-muted);font:600 11.5px var(--body);padding:5px 10px;border-radius:999px;cursor:pointer}
+.themes button:hover{color:#fff}
+.themes button.on{background:#fff;color:var(--navy)}
+.themes button:focus-visible{outline:2px solid #7fb0ff;outline-offset:1px}
+.tag{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--navy-muted);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:4px 10px}
+.headline{display:grid;grid-template-columns:1.3fr 1fr;gap:24px;margin-top:22px;align-items:end}
+.headline .lbl{font-size:13px;color:var(--navy-muted)}
+.big{font-family:var(--display);font-weight:700;font-size:clamp(30px,5vw,42px);letter-spacing:-.01em;line-height:1.1;margin-top:4px}
+.delta{margin-top:6px;font-size:13.5px;color:#9be3b5}
+.delta .muted{color:var(--navy-muted)}
+.hstats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid rgba(255,255,255,.18)}
+.hstat{padding:12px 0 0}
+.hstat .k{font-size:12px;color:var(--navy-muted)}
+.hstat .v{font-family:var(--mono);font-size:18px;margin-top:2px}
+.hstat .s{font-size:11.5px;color:var(--navy-muted)}
+
+.bar{background:var(--navy-2);color:var(--navy-ink);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{appearance:none;background:none;border:0;color:var(--navy-muted);font:600 13.5px var(--body);padding:14px 14px 12px;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+.tab:hover{color:#fff}
+.tab[aria-selected="true"]{color:#fff;border-bottom-color:#7fb0ff}
+.tab:focus-visible{outline:2px solid #7fb0ff;outline-offset:-4px}
+
+/* Body grid */
+main .wrap{padding-block:22px 40px;display:grid;grid-template-columns:320px minmax(0,1fr);gap:22px;align-items:start}
+.rail,.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.rail{padding:18px;display:flex;flex-direction:column;gap:16px}
+.rail h2,.panel h2{font-family:var(--display);font-size:15px;font-weight:700;margin:0}
+.eyebrow{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--fg-3);font-weight:600}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12.5px;color:var(--fg-2);font-weight:500}
+.inwrap{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;background:var(--surface);overflow:hidden}
+.inwrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.inwrap span{padding:0 10px;color:var(--fg-3);font-size:13px}
+.inwrap input{border:0;background:transparent;color:var(--fg);font:500 14px var(--mono);padding:9px 10px;width:100%;min-width:0;outline:none}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{font-size:11.5px;color:var(--fg-3)}
+.seg{display:flex;background:var(--surface-2);border-radius:8px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:none;color:var(--fg-2);font:600 12px var(--body);padding:7px 6px;border-radius:6px;cursor:pointer}
+.seg button.on{background:var(--surface);color:var(--accent);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;font:600 13px var(--body);padding:9px 14px;border-radius:999px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn:focus-visible,.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.content{display:flex;flex-direction:column;gap:18px;min-width:0}
+.panel{padding:18px 20px;min-width:0}
+.panel-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.panel-h p{margin:2px 0 0;color:var(--fg-3);font-size:12.5px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.kpi .k{font-size:12px;color:var(--fg-3)}
+.kpi .v{font-family:var(--mono);font-size:21px;font-weight:500;margin-top:4px}
+.kpi .s{font-size:12px;color:var(--fg-2);margin-top:2px}
+.up{color:var(--good)} .down{color:var(--bad)}
+
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--fg-3);font-weight:600;text-align:right;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td:first-child{font-family:var(--body)}
+tr.total td{font-weight:600;border-bottom:0}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px;vertical-align:-1px}
+.wt{width:74px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--fg);font:500 13px var(--mono);padding:5px 7px;text-align:right}
+.wt:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;border-radius:999px;padding:4px 10px;display:inline-flex;gap:6px;align-items:center;font-weight:500}
+.chip.ok{background:var(--good-bg);color:var(--good)}
+.chip.no{background:var(--bad-bg);color:var(--bad)}
+.chip.w{background:var(--warn-bg);color:var(--warn)}
+.chip b{font-family:var(--mono);font-weight:500}
+
+.chart{position:relative;height:300px}
+.chart.sm{height:260px}
+.chartmsg{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:16px;color:var(--fg-3);font-size:13px;border:1px dashed var(--line);border-radius:8px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--fg-2);margin-bottom:10px}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.legend i.sq{height:10px;width:10px;border-radius:3px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.note{font-size:12.5px;color:var(--fg-2);background:var(--surface-2);border-radius:8px;padding:10px 12px}
+.note b{color:var(--fg)}
+.callout{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border-radius:var(--r);background:var(--accent-soft);color:var(--fg)}
+.callout .n{font-family:var(--display);font-weight:800;font-size:22px;color:var(--accent);line-height:1}
+.status{font-family:var(--body);font-size:12px;font-weight:600}
+select.sel{border:0;background:transparent;color:var(--fg);font:500 13.5px var(--body);padding:9px 10px;width:100%;min-width:0;outline:none;appearance:auto}
+.explain{font-size:11.5px;line-height:1.45;color:var(--fg-2);background:var(--surface-2);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;padding:7px 9px}
+.mandate{display:flex;flex-direction:column;gap:12px}
+.mandate p{margin:0;font-size:14px;line-height:1.6;color:var(--fg);max-width:80ch}
+.mgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.mcell{border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+.mcell .k{font-size:11px;color:var(--fg-3);text-transform:uppercase;letter-spacing:.06em}
+.mcell .v{font-size:13px;font-weight:600;margin-top:2px}
+@media (max-width:700px){.mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.mini{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--accent);font:600 12px var(--body);padding:5px 10px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.mini:hover{border-color:var(--accent)}
+.mini.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.mini:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+tr.hl td{background:var(--accent-soft)}
+.pill{display:inline-block;font:600 11px var(--body);padding:2px 8px;border-radius:999px}
+.pill.ok{background:var(--good-bg);color:var(--good)} .pill.no{background:var(--bad-bg);color:var(--bad)}
+.inline-in{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.inline-in .inwrap{width:130px}
+.src{font-size:12px;color:var(--fg-3);margin-top:10px}
+footer{color:var(--fg-3);font-size:12px;padding-block:0 30px}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+@media (max-width:980px){
+  main .wrap{grid-template-columns:1fr}
+  .rail{position:static}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .two{grid-template-columns:1fr}
+  .headline{grid-template-columns:1fr}
+}
+@media (max-width:420px){ .hstats{grid-template-columns:1fr 1fr 1fr} .hstat .v{font-size:15px} }
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="brand">
+      <div class="brand-l">
+        <div class="mark" aria-hidden="true">PP</div>
+        <div><h1>Portfolio Planner</h1><p id="hSub">Client: 32-year-old professional · 10-year horizon · target volatility 12%</p></div>
+      </div>
+      <div class="brand-r"><span class="tag">Model v7 · amounts in US$</span>
+        <div class="themes" role="group" aria-label="Language" id="langSw"><button type="button" data-lg="en" class="on">EN</button><button type="button" data-lg="es">ES</button></div>
+        <div class="themes" role="group" aria-label="Colour theme"><button type="button" data-th="auto" class="on">Auto</button><button type="button" data-th="light">Light</button><button type="button" data-th="dark">Dark</button></div></div>
+    </div>
+    <div class="headline">
+      <div>
+        <div class="lbl">Projected wealth in <span id="hYears">10</span> years · target portfolio, base case</div>
+        <div class="big num" id="hWealth">US$0</div>
+        <div class="delta"><span id="hDelta">+US$0</span> <span class="muted">vs keeping the current portfolio</span></div>
+      </div>
+      <div class="hstats">
+        <div class="hstat"><div class="k">Expected return</div><div class="v" id="hRet">0%</div><div class="s" id="hRetS">current 0%</div></div>
+        <div class="hstat"><div class="k">Volatility</div><div class="v" id="hVol">0%</div><div class="s" id="hVolS">current 0%</div></div>
+        <div class="hstat"><div class="k">Sharpe</div><div class="v" id="hSh">0</div><div class="s" id="hShS">current 0</div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="bar" aria-label="Sections">
+  <div class="wrap tabs" role="tablist">
+    <button class="tab" role="tab" id="t-overview" aria-selected="true" data-tab="overview">Overview</button>
+    <button class="tab" role="tab" id="t-front" aria-selected="false" data-tab="front">Efficient frontier</button>
+    <button class="tab" role="tab" id="t-alloc" aria-selected="false" data-tab="alloc">Allocation</button>
+    <button class="tab" role="tab" id="t-plan" aria-selected="false" data-tab="plan">Transition plan</button>
+    <button class="tab" role="tab" id="t-risk" aria-selected="false" data-tab="risk">Risk</button>
+    <button class="tab" role="tab" id="t-goal" aria-selected="false" data-tab="goal">Retirement goal</button>
+    <button class="tab" role="tab" id="t-valid" aria-selected="false" data-tab="valid">Validation</button>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+    <aside class="rail" aria-label="Inputs">
+      <div><div class="eyebrow">Layer 1</div><h2>Client profile</h2></div>
+      <div class="field"><label for="pName">Client</label><div class="inwrap"><input id="pName" type="text" value="32-year-old professional" style="font-family:var(--body)"></div><div class="explain">Anonymised description used in the mandate and the report.</div></div>
+      <div class="field"><label for="pObj">Investment objective</label><div class="inwrap"><select id="pObj" class="sel"><option value="growth" selected>Long-term growth</option><option value="balanced">Balanced growth</option><option value="income">Income</option><option value="preserve">Capital preservation</option></select></div><div class="explain" id="xObj"></div></div>
+      <div class="field"><label for="pRisk">Risk profile</label><div class="inwrap"><select id="pRisk" class="sel"><option value="0">Conservative · 6% volatility</option><option value="3">Moderate · 9% volatility</option><option value="6" selected>Medium-high · 12% volatility</option><option value="8">High · 14% volatility</option></select></div><div class="explain" id="xRisk"></div></div>
+      <div class="field"><label for="iLoss">1-year VaR limit (99%, model)</label><div class="inwrap"><input id="iLoss" type="number" min="0" max="60" step="0.5" value="20"><span>%</span></div><div class="explain" id="xLoss"></div></div>
+      <div class="row2">
+        <div class="field"><label for="pCcy">Saves in</label><div class="inwrap"><select id="pCcy" class="sel"><option value="CLP" selected>CLP</option><option value="EUR">EUR</option><option value="USD">USD</option></select></div></div>
+        <div class="field"><label for="pFx">Rate per US$</label><div class="inwrap"><input id="pFx" type="number" min="0" step="0.01" value="976.44"></div></div>
+      </div>
+      <div class="explain" id="xCcy"></div>
+      <div class="field"><label for="pNote">Other mandate rules</label><div class="inwrap"><input id="pNote" type="text" value="Prepay the mortgage only if the portfolio's expected real return (after tax and currency effects) falls below the ~4% real mortgage rate" style="font-family:var(--body);font-size:13px"></div></div>
+
+      <div style="border-top:1px solid var(--line);padding-top:14px"><div class="eyebrow">Layer 2</div><h2>Cash flows and horizon</h2></div>
+      <div class="field"><label for="iCap">Initial capital</label><div class="inwrap"><span>US$</span><input id="iCap" type="number" min="0" step="1000" value="30000"></div><div class="explain">Liquid savings to invest. Illustrative amount; the report never shows real balances.</div></div>
+      <div class="field"><label for="iCon">Monthly contribution</label><div class="inwrap"><span>US$</span><input id="iCon" type="number" min="0" step="100" value="1843"></div><div class="explain" id="xCon"></div></div>
+      <div class="row2">
+        <div class="field"><label for="iCar">Liquidity months</label><div class="inwrap"><input id="iCar" type="number" min="0" max="60" step="1" value="8"><span>mo</span></div></div>
+        <div class="field"><label for="iYrs">Horizon</label><div class="inwrap"><input id="iYrs" type="number" min="1" max="30" step="1" value="10"><span>yrs</span></div></div>
+      </div>
+      <div class="field"><label for="pLiq">Liquidity need</label><div class="inwrap"><input id="pLiq" type="text" value="car purchase within 12 months" style="font-family:var(--body);font-size:13px"></div><div class="explain" id="xLiq"></div></div>
+
+      <div style="border-top:1px solid var(--line);padding-top:14px"><div class="eyebrow">Layer 3</div><h2>Implementation</h2></div>
+      <div class="field"><label>Target portfolio</label>
+        <div class="seg" id="presetSeg">
+          <button type="button" data-p="rec" class="on">From profile</button>
+          <button type="button" data-p="custom">Custom</button>
+        </div>
+        <div class="explain">From profile = Solver frontier portfolio for the risk profile, stepped down if it breaks the VaR limit. Custom = edit weights in Allocation or pick a frontier point.</div>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="iSell">Sell legacy at start</label><div class="inwrap"><input id="iSell" type="number" min="0" max="100" step="5" value="0"><span>%</span></div></div>
+        <div class="field"><label for="iRf">Risk-free rate</label><div class="inwrap"><input id="iRf" type="number" step="0.1" value="4"><span>%</span></div></div>
+      </div>
+      <div class="explain">Sell legacy: share of current holdings moved to the target on day one. 0% means new money does all the work, with no sales and no tax event. The risk-free rate is used for the Sharpe ratio.</div>
+      <div class="field"><label>Current portfolio</label><div class="explain">Edit the client's current weights in the Allocation tab. Default: 55% EM stocks (proxy for Chilean shares) and 45% bonds.</div></div>
+      <button class="btn ghost" type="button" id="reset">Reset to model defaults</button>
+    </aside>
+
+    <div class="content">
+      <!-- OVERVIEW -->
+      <section data-panel="overview" class="content">
+        <div class="panel mandate">
+          <div><div class="eyebrow">Client mandate</div><h2 style="margin-top:2px">Investment Policy Statement in one paragraph</h2></div>
+          <p id="mandateText"></p>
+          <div class="mgrid" id="mandateGrid"></div>
+        </div>
+        <div class="kpis">
+          <div class="kpi"><div class="k">Return gain</div><div class="v up" id="kRet">+0 pp</div><div class="s">target vs current, per year</div></div>
+          <div class="kpi"><div class="k">Extra risk</div><div class="v" id="kVol">+0 pp</div><div class="s">annual volatility</div></div>
+          <div class="kpi"><div class="k">Total invested</div><div class="v" id="kInv">US$0</div><div class="s" id="kInvS">capital + contributions</div></div>
+          <div class="kpi"><div class="k">1-year VaR 99%</div><div class="v" id="kVaR">US$0</div><div class="s">target, on initial capital</div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div><h2>Wealth projection</h2><p>Base case at expected returns, monthly compounding, contributions at month end. Same formula as the Excel dashboard.</p></div>
+            <div class="seg" id="scenSeg" role="group" aria-label="Scenario" style="min-width:300px"><button type="button" data-sc="bear">Bear</button><button type="button" data-sc="base" class="on">Base</button><button type="button" data-sc="bull">Bull</button><button type="button" data-sc="all">All</button></div></div>
+          <div class="legend" id="lgWealth"></div>
+          <div class="chart"><canvas id="cWealth" aria-label="Wealth projection chart"></canvas></div>
+          <div class="src" id="wealthNote"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div><h2>Bear, base and bull scenarios</h2><p id="scenSub">Initial capital only, Excel dashboard method: capital × (1 + μ ± 1.65σ)^years.</p></div></div>
+          <div class="tw"><table id="tScen"></table></div>
+          <div class="src">The template assumes a 5th or 95th percentile year repeats every year, so its bear and bull cases are extreme bounds. The standard cone lets good and bad years offset (risk grows with √t), so it gives the realistic 90% range for the horizon.</div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div><h2>Year by year</h2><p>The transition path is the real portfolio while new money moves it toward the target.</p></div></div>
+          <div class="tw"><table id="tYears"></table></div>
+        </div>
+      </section>
+
+      <!-- FRONTIER -->
+      <section data-panel="front" class="content" hidden>
+        <div class="panel">
+          <div class="panel-h"><div><h2>Efficient frontier</h2><p>Highest expected return for each level of risk, under the IPS constraints (Solver runs from the Excel model).</p></div></div>
+          <div class="legend" id="lgFront"></div>
+          <div class="chart"><canvas id="cFront" aria-label="Efficient frontier chart"></canvas></div>
+          <div class="note" style="margin-top:12px" id="frontNote"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div><h2>Frontier portfolios</h2><p>Pick a point to load it as the target. VaR is parametric, 1 year, 99%, on the initial capital.</p></div></div>
+          <div class="tw"><table id="tFront"></table></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div><h2>Robustness checks</h2><p>Solver re-run under alternative constraints, risk targets and assumptions (static values from Excel model v7, EF Output rows 22 to 32).</p></div></div>
+          <div class="tw"><table id="tRob"></table></div>
+          <div class="src">The gain over the current mix does not depend on gold or on any single constraint. The 10% international minimum costs 0.15 pp of return and is the only non-US equity; EM and small caps stay at 0%.</div>
+        </div>
+      </section>
+
+      <!-- ALLOCATION -->
+      <section data-panel="alloc" class="content" hidden>
+        <div class="panel">
+          <div class="panel-h"><div><h2>Current vs target weights</h2><p>Each portfolio must add to 100%. Assumptions are the forward-looking set in the Excel model.</p></div>
+            <div class="chips" id="sumChips"></div></div>
+          <div class="tw"><table id="tAlloc"></table></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div><h2>IPS constraint check</h2><p>Target portfolio against the limits in the Investment Policy Statement.</p></div></div>
+          <div class="chips" id="consChips"></div>
+        </div>
+        <div class="two">
+          <div class="panel">
+            <div class="panel-h"><div><h2>Risk and return map</h2><p>Each asset class, the current mix and the target.</p></div></div>
+            <div class="chart sm"><canvas id="cMap" aria-label="Risk return scatter"></canvas></div>
+          </div>
+          <div class="panel">
+            <div class="panel-h"><div><h2>Assumptions</h2><p>Course assumptions. Returns: 50% 30-year history and 50% J.P. Morgan 30-year outlook. Risk: median of rolling 5-year volatility over 30 years. Correlations: a blend that keeps bonds negatively correlated with stocks.</p></div></div>
+            <div class="tw"><table id="tAssump"></table></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PLAN -->
+      <section data-panel="plan" class="content" hidden>
+        <div class="callout" id="planCallout"></div>
+        <div class="panel">
+          <div class="panel-h"><div><h2>First month of investing</h2><p>How to split the contribution so the portfolio moves toward the target without selling.</p></div></div>
+          <div class="tw"><table id="tFirst"></table></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div><h2>Allocation over time</h2><p>Share of the portfolio by asset class at each year end (transition path).</p></div></div>
+          <div class="legend" id="lgDrift"></div>
+          <div class="chart"><canvas id="cDrift" aria-label="Allocation over time"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div><h2>Monthly buy schedule</h2><p>First 12 months of investing. Gap = share of the portfolio that still differs from the target.</p></div></div>
+          <div class="tw"><table id="tSched"></table></div>
+        </div>
+      </section>
+
+      <!-- RISK -->
+      <section data-panel="risk" class="content" hidden>
+        <div class="panel">
+          <div class="panel-h"><div><h2>Suitability check</h2><p>The risk profile picks a frontier point; the 1-year VaR limit caps it. The stricter of the two wins.</p></div></div>
+          <div class="callout" id="lossCallout"></div>
+          <div class="chips" style="margin-top:12px" id="suitChips"></div>
+          <div class="note" style="margin-top:12px" id="tailNote"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div><h2>Risk in US dollars</h2><p>Parametric, normal returns, 1-year horizon, 99% confidence, forward-looking assumptions. VaR = μ − 2.33σ; ES = μ − 2.6685σ.</p></div></div>
+          <div class="tw"><table id="tRisk"></table></div>
+        </div>
+        <div class="note" id="ccyNote"></div>
+        <div class="panel">
+          <div class="panel-h"><div><h2>Historical risk</h2><p id="histSub">Current and target portfolios rebuilt on 361 months of asset returns (Apr 1996 to Apr 2026), rebalanced monthly. Same data and method as the Excel Historical VaR tab.</p></div></div>
+          <div class="tw"><table id="tHist"></table></div>
+          <div class="src">Monthly and annual figures are different horizons and are never compared directly. Historical VaR is the 1st percentile of monthly returns; historical ES is the average of the worst 1% of months (4 of 361).</div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div><h2>Monthly tail: normal model vs history</h2><p>Same 361 months, same method as the histogram in the Excel Historical VaR tab.</p></div></div>
+          <div class="tw"><table id="tTail"></table></div>
+          <div class="src" id="tailSrc"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div><h2>Historical stress test</h2><p>Monthly returns compounded over each episode, monthly rebalancing. Loss shown on the initial capital.</p></div></div>
+          <div class="tw"><table id="tStress"></table></div>
+          <div class="note" style="margin-top:12px" id="stressNote"></div>
+        </div>
+      </section>
+
+      <!-- RETIREMENT GOAL -->
+      <section data-panel="goal" class="content" hidden>
+        <div class="panel">
+          <div class="panel-h"><div><h2>Retirement income goal</h2><p>How much the client must invest each month to live off the portfolio, with the current mix versus the target. Capital and contributions come from the left panel.</p></div></div>
+          <div class="row2" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+            <div class="field"><label for="gInc">Monthly income wanted (CLP of today)</label><div class="inwrap"><span>CLP</span><input id="gInc" type="number" min="0" step="100000" value="10000000"></div></div>
+            <div class="field"><label for="gYrs">Years until retirement</label><div class="inwrap"><input id="gYrs" type="number" min="1" max="50" value="30"><span>yrs</span></div></div>
+            <div class="field"><label for="gWr">Withdrawal rate</label><div class="inwrap"><input id="gWr" type="number" min="0.5" max="10" step="0.1" value="4"><span>%</span></div></div>
+            <div class="field"><label for="gConf">Confidence</label><div class="inwrap"><select id="gConf" class="sel"><option value="0.5">50%: typical case</option><option value="0.75" selected>75%: 3 in 4 futures</option><option value="0.9">90%: 9 in 10 futures</option></select></div></div>
+            <div class="field"><label for="gInf">US inflation</label><div class="inwrap"><input id="gInf" type="number" step="0.1" value="2.5"><span>%</span></div></div>
+            <div class="field"><label for="gTax">Taxes in Chile</label><div class="inwrap"><select id="gTax" class="sel"><option value="none">No taxes</option><option value="apv">APV (Régimen A): taxes deferred</option><option value="107" selected>Art. 107: 10% single tax on gains</option><option value="gc">Global Complementario at your bracket</option></select></div></div>
+            <div class="field" id="gRateF" hidden><label for="gRate">Your Global Complementario bracket</label><div class="inwrap"><input id="gRate" type="number" min="0" max="40" step="1" value="23"><span>%</span></div></div>
+            <div class="field"><label>&nbsp;</label><label class="gchk" style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--fg-2)"><input type="checkbox" id="gGlide" checked> <span>Target moves to the 9% frontier portfolio in the last 10 years</span></label></div>
+          </div>
+          <div class="explain" style="margin-top:12px" id="gTaxX"></div>
+          <div class="explain" style="margin-top:8px">Capital needed = yearly income ÷ withdrawal rate (4% is the classic rule from US data; 3.5% is safer for a long retirement). Everything is in today's money: contributions rise with inflation (for example, indexed to the UF).</div>
+        </div>
+        <div class="callout" id="gCallout"></div>
+        <div class="panel">
+          <div class="panel-h"><div><h2>Monthly investment needed: current vs target</h2><p id="gSub"></p></div></div>
+          <div class="tw"><table id="gTab"></table></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div><h2>Wealth with the current contribution</h2><p>Typical case (median) and bad case (1 in 10) of 5,000 simulated futures, in today's money.</p></div></div>
+          <div class="legend" id="lgGoal"></div>
+          <div class="chart"><canvas id="cGoal" aria-label="Retirement goal chart"></canvas></div>
+          <div class="note" style="margin-top:12px" id="gNote"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div><h2>What this tab includes</h2><p>This tab goes beyond the Excel model of the course. Read these limits before using its figures.</p></div></div>
+          <div class="two">
+            <div><div class="eyebrow" style="margin-bottom:6px">Included in this tab</div><ul style="margin:0;padding-left:18px;color:var(--fg-2);font-size:13px;line-height:1.55"><li>Chile taxes as a yearly drag on returns: none, APV Régimen A, Art. 107 (10%) or Global Complementario at the chosen bracket.</li><li>The same tax treatment for the current and the target portfolio, so the comparison stays fair.</li><li>Taxes in retirement: they lower the withdrawal the capital can sustain, so the capital needed rises.</li><li>Inflation: all figures are in today's money and contributions rise with inflation.</li><li>Uncertainty: 5,000 simulated futures; the required saving is shown at 50%, 75% and 90% confidence.</li></ul></div>
+            <div><div class="eyebrow" style="margin-bottom:6px">Not included</div><ul style="margin:0;padding-left:18px;color:var(--fg-2);font-size:13px;line-height:1.55"><li>Taxes in the other tabs: Overview, Efficient frontier, Allocation, Transition plan and Risk are pre-tax, like the Excel model they are validated against.</li><li>The APV state bonus (15%) and the yearly APV limits.</li><li>The Art. 57 exemption for mutual fund redemptions (up to 30 UTM a year).</li><li>Tax on currency gains from investing in US dollars, and USD/CLP exchange-rate risk.</li><li>Fund and broker fees, which lower returns in the same way as taxes.</li><li>Taxes of another country of residence (for example Spain).</li><li>A rule to live only off returns: set the withdrawal rate to about 4.2% (half the futures keep the capital intact) or 3% (about three in four).</li></ul></div>
+          </div>
+          <div class="note" style="margin-top:12px">Not tax or financial advice. Tax rules change and depend on residence; check with a tax adviser before acting.</div>
+        </div>
+      </section>
+
+      <!-- VALIDATION -->
+      <section data-panel="valid" class="content" hidden>
+        <div class="panel">
+          <div class="panel-h"><div><h2>Validation against Excel model v7</h2><p>Recomputed with the model default inputs (medium-high profile, 20% VaR limit), whatever is entered on the left.</p></div><div class="chips" id="valChip"></div></div>
+          <div class="tw"><table id="tValid"></table></div>
+        </div>
+        <div class="note"><b>Scope.</b> These checks cover the pre-tax model replicated from the Excel, including the v7 additions (probability cone, unconstrained frontier and monthly tail). The parametric monthly VaR is checked to 0.05 pp because the Excel reports it rounded. The Retirement goal tab adds taxes, inflation and simulations that are not in the Excel model, so it is checked separately (against an independent Python simulation), not here.</div>
+        <div class="note"><b>Method.</b> Portfolio return = Σ wᵢμᵢ. Volatility = √(wᵀΣw), with Σ built from the asset volatilities and the correlation matrix. Sharpe = (return − risk-free) / volatility. The projection uses the same closed form as the Client Outcome dashboard. The transition path simulates each asset class month by month and sends each contribution to the classes furthest below target.</div>
+      </section>
+    </div>
+  </div>
+</main>
+<footer><div class="wrap"><span>Academic exercise for IE IMBA Asset Management. Not financial advice. Figures are pre-tax and exclude fees and USD/CLP currency risk, except the optional Chile tax setting in the Retirement goal tab.</span><span>Built with Claude (Anthropic). Figures validated against Excel model v7. Amounts in US$.</span></div></footer>
+
+<script>
+const A = {
+  key:["lcg","lcv","scg","scv","intl","em","gold","bond","hy"],
+  name:["LC Growth","LC Value","SC Growth","SC Value","Intl Developed","EM Stocks","Gold","Bonds","High Yield"],
+  mu:[0.0873137709474362,0.0851682414261568,0.0709022159098469,0.0818259387847549,0.0701955486517694,0.0721400823610846,0.0703602729238274,0.0435123253111887,0.0637350429037552],
+  sd:[0.157819106850946,0.139397195680695,0.208483499718486,0.163221295020179,0.156964227073926,0.199481552895218,0.140218641204134,0.0446051144167904,0.0755145160032851],
+  corr:[
+   [1,0.856822258051083,0.838910242164175,0.726773993098843,0.800273190700399,0.677806725960368,0.0446448429694352,-0.199793719935806,0.632399589660536],
+   [0.856822258051083,1,0.809646856891951,0.850893566171009,0.816387859048604,0.685718196229632,0.0331440136990522,-0.228729745981219,0.671601796265104],
+   [0.838910242164175,0.809646856891951,1,0.908313801057603,0.756219934476666,0.679813864610359,0.071181642127554,-0.271030546276768,0.589298813050227],
+   [0.726773993098843,0.850893566171009,0.908313801057603,1,0.72639047265375,0.65643225310991,0.0342816470208407,-0.24475069319892,0.639690471253727],
+   [0.800273190700399,0.816387859048604,0.756219934476666,0.72639047265375,1,0.887122234182392,0.188947299236462,-0.181242193476217,0.759061615598157],
+   [0.677806725960368,0.685718196229632,0.679813864610359,0.65643225310991,0.887122234182392,1,0.261748527147631,-0.194742157096066,0.670231660810029],
+   [0.0446448429694352,0.0331440136990522,0.071181642127554,0.0342816470208407,0.188947299236462,0.261748527147631,1,0.211215036813655,0.146672019252549],
+   [-0.199793719935806,-0.228729745981219,-0.271030546276768,-0.24475069319892,-0.181242193476217,-0.194742157096066,0.211215036813655,1,-0.0261692981943532],
+   [0.632399589660536,0.671601796265104,0.589298813050227,0.639690471253727,0.759061615598157,0.670231660810029,0.146672019252549,-0.0261692981943532,1]]
+};
+const N = 9;
+const DEF = {
+  cap:30000, con:1843, car:8, yrs:10, rf:4, sell:0,
+  cur:[0,0,0,0,0,55,0,45,0],
+  rec:[21.35642356131532,50.00000000000003,0,0,10.000000000000027,0,10.000000000000007,0,8.643576438684618]
+};
+const EXCEL = {curR:0.0592575916886315,curV:0.107622082300849,curS:0.17893717791855,recR:0.0807957887731438,recV:0.120000000000084,recS:0.339964906442626,curW10:325988.640146734,recW10:367437.732843026,inv:236416};
+const FRONT = [
+ [0.06,0.0621165804261775,[0.024650955470702222,0.21206640238820415,0,0,0.1,0,0.1,0.3982420015955288,0.16504064054556475]],
+ [0.07,0.0656820480103398,[0.04490422843144443,0.2636101364395371,0,0,0.1,0,0.1,0.3001753557334811,0.19131027939553763]],
+ [0.08,0.06896162138834223,[0.06537210991850172,0.31659950793537706,0,0,0.1,0,0.1,0.21802838214612144,0.2]],
+ [0.09,0.07208128889010143,[0.08582419938195186,0.3699853561985758,0,0,0.1,0,0.1,0.14419044441947237,0.2]],
+ [0.10,0.07510190156327994,[0.10562691257931457,0.42167609807714235,0,0,0.1,0,0.1,0.07269698934354325,0.2]],
+ [0.11,0.07805620028553677,[0.12499480131498895,0.47223211491998296,0,0,0.1,0,0.1,0.0027730837650280496,0.2]],
+ [0.12,0.08079578877314379,[0.2135642356131532,0.5000000000000003,0,0,0.10000000000000027,0,0.10000000000000007,0,0.08643576438684618]],
+ [0.13,0.08310966640644088,[0.3549474364652249,0.4557185035988934,0,0,0.1,0,0.08933405993588156,0,0]],
+ [0.14,0.0843632580904561,[0.4252967472663605,0.4598328277464856,0,0,0.1,0,0.014870424987153777,0,0]],
+ [null,null,[0.5,0.4,0,0,0.1,0,0,0,0]]];
+const ROB = [["Base case (min 10% Intl)",0.12,0.08079578877335493,0.33996490644210536,"21 / 50 / 10 / 10 / 0 / 9"],["No Intl minimum",0.12,0.08226912655140584,0.35224272125995404,"30 / 50 / 0 / 10 / 0 / 10"],["Gold max 5%",0.12,0.0800043005964619,0.33336917163472773,"19 / 50 / 10 / 5 / 0 / 16"],["Gold 0%",0.12,0.07904982202361281,0.3254151835287724,"18 / 50 / 10 / 0 / 2 / 20"],["Min 10% Bonds",0.12,0.07949101908761289,0.3290918257275642,"34 / 41 / 10 / 5 / 10 / 0"],["Risk = current portfolio",0.107622,0.07735849939821636,0.347126975877625,"12 / 46 / 10 / 10 / 2 / 20"],["Risk target 9%",0.09,0.07208128889027167,0.35645876544404403,"9 / 37 / 10 / 10 / 14 / 20"],["Risk target 14%",0.14,0.08436325809055513,0.3168804149304585,"43 / 46 / 10 / 1 / 0 / 0"],["Risk target 17% (frontier ends)",0.14329511190472422,0.08474373690935776,0.31224887098108073,"50 / 40 / 10 / 0 / 0 / 0"],["30-year historical assumptions",0.12,0.08793029326863794,0.3994191105667651,"42 / 13 / 10 / 10 / 5 / 20"],["Base weights on 30-year data",0.1307284973843591,0.0905101921329772,0.38637476253146663,"21 / 50 / 10 / 10 / 0 / 9"]];
+const HIST = {curR:0.0610534090059542,recR:0.0944187471877234,curV:0.119406132180361,recV:0.130728497383509,curHV:-0.0808873911285591,recHV:-0.0889212684288046,curHES:-0.11879462879407887,recHES:-0.13264300559652714};
+const EXCEL2 = {curPV:-0.191501860072346,recPV:-0.198804211227053,curPES:-0.22793332997172,recPES:-0.239425766715146,curHPV:-0.217162878974287,recHPV:-0.210178651715852,curHPES:-0.257583402507452,recHPES:-0.254431942635314,curBear:8516.02332317944,recBear:8624.29855352875,curBull:251324.891754005,recBull:350859.490923832,curBase:53350.3296675884,recBase:65246.571074899};
+const UNC=[[0.06,0.06456282175490752],[0.07,0.06841889064615049],[0.08,0.07205222298206783],[0.09,0.07555731117166269],[0.10,0.07884409777059696],[0.11,0.08153571758924189],[0.12,0.08324749288902066],[0.13,0.0846343638394829],[0.14,0.08586689389452955]];
+const UNC12W=[0.321248,0.502496,0,0,0,0,0.176256,0,0];
+const EXCEL7={cone:{cur:[30427.115289507627,53350.32966758836,93543.46110562282],rec:[34884.49696683638,65246.57107489899,122034.58290021938]},unc12:0.08324749288902066,pvm:{cur:-0.0747,rec:-0.0797},below:{cur:8,rec:6}};
+const STRESS = [["Global Financial Crisis (Nov-07 to Feb-09)",-0.354515739819361,-0.458853714955007],["Calendar year 2008",-0.281957032101846,-0.333857616133656],["COVID (Feb to Mar 2020)",-0.0873462700104133,-0.194113151613262],["Calendar year 2022",-0.162904682116676,-0.127043444849543],["Worst month (30 years)",-0.150910715975651,-0.176810980955105]];
+
+const HD = {"d":["1996-04","1996-05","1996-06","1996-07","1996-08","1996-09","1996-10","1996-11","1996-12","1997-01","1997-02","1997-03","1997-04","1997-05","1997-06","1997-07","1997-08","1997-09","1997-10","1997-11","1997-12","1998-01","1998-02","1998-03","1998-04","1998-05","1998-06","1998-07","1998-08","1998-09","1998-10","1998-11","1998-12","1999-01","1999-02","1999-03","1999-04","1999-05","1999-06","1999-07","1999-08","1999-09","1999-10","1999-11","1999-12","2000-01","2000-02","2000-03","2000-04","2000-05","2000-06","2000-07","2000-08","2000-09","2000-10","2000-11","2000-12","2001-01","2001-02","2001-03","2001-04","2001-05","2001-06","2001-07","2001-08","2001-09","2001-10","2001-11","2001-12","2002-01","2002-02","2002-03","2002-04","2002-05","2002-06","2002-07","2002-08","2002-09","2002-10","2002-11","2002-12","2003-01","2003-02","2003-03","2003-04","2003-05","2003-06","2003-07","2003-08","2003-09","2003-10","2003-11","2003-12","2004-01","2004-02","2004-03","2004-04","2004-05","2004-06","2004-07","2004-08","2004-09","2004-10","2004-11","2004-12","2005-01","2005-02","2005-03","2005-04","2005-05","2005-06","2005-07","2005-08","2005-09","2005-10","2005-11","2005-12","2006-01","2006-02","2006-03","2006-04","2006-05","2006-06","2006-07","2006-08","2006-09","2006-10","2006-11","2006-12","2007-01","2007-02","2007-03","2007-04","2007-05","2007-06","2007-07","2007-08","2007-09","2007-10","2007-11","2007-12","2008-01","2008-02","2008-03","2008-04","2008-05","2008-06","2008-07","2008-08","2008-09","2008-10","2008-11","2008-12","2009-01","2009-02","2009-03","2009-04","2009-05","2009-06","2009-07","2009-08","2009-09","2009-10","2009-11","2009-12","2010-01","2010-02","2010-03","2010-04","2010-05","2010-06","2010-07","2010-08","2010-09","2010-10","2010-11","2010-12","2011-01","2011-02","2011-03","2011-04","2011-05","2011-06","2011-07","2011-08","2011-09","2011-10","2011-11","2011-12","2012-01","2012-02","2012-03","2012-04","2012-05","2012-06","2012-07","2012-08","2012-09","2012-10","2012-11","2012-12","2013-01","2013-02","2013-03","2013-04","2013-05","2013-06","2013-07","2013-08","2013-09","2013-10","2013-11","2013-12","2014-01","2014-02","2014-03","2014-04","2014-05","2014-06","2014-07","2014-08","2014-09","2014-10","2014-11","2014-12","2015-01","2015-02","2015-03","2015-04","2015-05","2015-06","2015-07","2015-08","2015-09","2015-10","2015-11","2015-12","2016-01","2016-02","2016-03","2016-04","2016-05","2016-06","2016-07","2016-08","2016-09","2016-10","2016-11","2016-12","2017-01","2017-02","2017-03","2017-04","2017-05","2017-06","2017-07","2017-08","2017-09","2017-10","2017-11","2017-12","2018-01","2018-02","2018-03","2018-04","2018-05","2018-06","2018-07","2018-08","2018-09","2018-10","2018-11","2018-12","2019-01","2019-02","2019-03","2019-04","2019-05","2019-06","2019-07","2019-08","2019-09","2019-10","2019-11","2019-12","2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04"],"r":[[0.0263154,0.0038933,0.0766166,0.0268888,0.0305217,0.0398176,-0.0096093,-0.0064028,0.0022022],[0.0349196,0.012462,0.0510956,0.0247353,-0.0132299,-0.0047787,-0.0016596,-0.0016207,0.0060076],[0.0013555,0.0007959,-0.0651792,-0.0123589,0.0061791,0.0061653,-0.0269821,0.0126753,0.0082721],[-0.0585939,-0.0377849,-0.1221898,-0.0534937,-0.0335078,-0.0686835,0.0173479,0.0023725,0.0046552],[0.0258095,0.028619,0.0738536,0.0428056,0.005666,0.0254078,-0.001421,-0.0020854,0.0108042],[0.0728573,0.0397634,0.0513421,0.0267692,0.0253276,0.0088456,-0.0209573,0.0164363,0.0241008],[0.0060246,0.0386902,-0.0432619,0.0111923,-0.0108007,-0.0269037,-0.0009249,0.0219728,0.0076894],[0.0750825,0.0725044,0.0276674,0.0534067,0.0379407,0.016351,-0.016929,0.0173286,0.0197256],[-0.0195675,-0.0127645,0.0193084,0.0318574,-0.0121206,0.0040827,-0.0106283,-0.0103001,0.0071596],[0.0701332,0.0484843,0.0249093,0.0150668,-0.0192475,0.068431,-0.0635029,0.0009929,0.0097638],[-0.0067709,0.0147169,-0.060522,0.0091353,0.017639,0.0425401,0.0554668,0.0012246,0.0165398],[-0.0541063,-0.0359125,-0.0707118,-0.0273104,-0.0011154,-0.0278547,-0.0335672,-0.0108124,-0.0148939],[0.0664577,0.0420507,-0.0116634,0.0144419,0.0084202,8.11e-05,-0.033452,0.0143557,0.0105453],[0.072167,0.0558942,0.1501378,0.0791539,0.0634943,0.0274287,0.0151694,0.0086427,0.0213943],[0.0400385,0.0429053,0.0337721,0.0501417,0.0562699,0.0529218,-0.031046,0.011167,0.0138684],[0.0884045,0.0753931,0.0511454,0.0417258,0.0201304,0.013974,-0.0281479,0.0286848,0.0274585],[-0.0585357,-0.0356549,0.0299224,0.0156272,-0.0789484,-0.1277751,-0.0012325,-0.0101315,-0.0022648],[0.0492234,0.0604392,0.079705,0.0662093,0.0544443,0.0270646,0.0317754,0.0151885,0.0198176],[-0.0369593,-0.027914,-0.0601027,-0.0274021,-0.0860386,-0.1644125,-0.0687696,0.0174124,0.0008903],[0.0424744,0.0442274,-0.0239353,0.0108012,-0.0127091,-0.0365245,-0.0463959,0.0052161,0.0095529],[0.0112082,0.0291839,0.0004474,0.0336223,0.0108271,0.0230661,-0.0267677,0.0105251,0.0087729],[0.0299224,-0.0141461,-0.013384,-0.018189,0.0289535,-0.0786117,0.0463588,0.0153156,0.0180009],[0.0752213,0.0673404,0.0881937,0.0602401,0.0666729,0.1043496,-0.0109109,-0.002975,0.0058569],[0.0398587,0.0611532,0.0418659,0.0403197,0.0359178,0.0423236,0.006017,0.0027297,0.0093832],[0.0138279,0.0066861,0.0060614,0.0049096,0.0074527,-0.0103375,0.01894,0.0044527,0.0039499],[-0.0283971,-0.0148703,-0.0727219,-0.0355051,-0.0164064,-0.1387302,-0.0446763,0.0103911,0.0034769],[0.0612688,0.0128171,0.0102357,-0.0057159,-0.0021958,-0.1047869,0.0136542,0.0115222,0.0035925],[-0.0066391,-0.0176326,-0.0835516,-0.0784033,0.0090414,0.0299181,-0.0353595,0.0015675,0.0056874],[-0.150095,-0.1488224,-0.2309181,-0.1566909,-0.1411593,-0.2917374,-0.038052,0.0271626,-0.0551791],[0.0768166,0.0573901,0.1013129,0.0563149,-0.0210375,0.0624555,0.0776629,0.027874,0.004513],[0.0803715,0.0774908,0.052102,0.0296501,0.1038697,0.1059359,-0.0148173,-0.0031981,-0.0204839],[0.0760768,0.0466388,0.0775042,0.026943,0.0532724,0.0831095,0.0022218,-0.0002241,0.0414942],[0.0901593,0.0340255,0.0903985,0.0312501,0.0335613,-0.0156863,-0.0168827,0.001956,0.001101],[0.0587174,0.0079585,0.0449511,-0.0227474,-0.001905,-0.0149409,-0.0072853,0.0058058,0.0148377],[-0.0456863,-0.0140848,-0.0915495,-0.0683905,-0.0230741,0.0100934,0.0031452,-0.0255254,-0.0058777],[0.0526375,0.0207034,0.0355505,-0.0084505,0.0501137,0.1314536,-0.024386,0.0038383,0.0095338],[0.001278,0.0934266,0.0882683,0.0912189,0.050344,0.123374,0.0232101,0.0023769,0.0193818],[-0.0380739,-0.0102553,0.0015321,0.0305803,-0.0434713,-0.0057627,-0.0565346,-0.0093303,-0.0135373],[0.0782082,0.028427,0.0526204,0.0360474,0.0475257,0.1134721,-0.0290364,-0.0020918,-0.0021294],[-0.0317942,-0.0292723,-0.0309416,-0.0237995,0.0230314,-0.0277963,-0.0249524,-0.0008447,0.0040126],[0.0163415,-0.0371417,-0.0374225,-0.0359852,0.0037844,0.0094273,-0.0010549,0.0001461,-0.0110451],[-0.0210082,-0.0349549,0.0192588,-0.0200396,0.0068191,-0.0340022,0.1684528,0.00766,-0.0072007],[0.0755177,0.0575546,0.0255976,-0.0200357,0.036583,0.0209688,0.0015063,0.0010874,-0.0066424],[0.0539514,-0.007902,0.1057182,0.005118,0.0396087,0.0897321,-0.0284091,-0.0019035,0.0117531],[0.1040059,0.0048198,0.1762235,0.0304699,0.0951207,0.1273532,-0.0092879,-0.006644,0.0112484],[-0.0468883,-0.0326168,-0.0093158,-0.026211,-0.0550262,0.0058928,-0.015625,0.0026086,-0.0043146],[0.0488618,-0.0743015,0.2326546,0.0610877,0.0266999,0.0132046,0.0306878,0.0150385,0.0019381],[0.0715749,0.1220058,-0.1051208,0.0046766,0.0387097,0.0053946,-0.0449008,0.0198601,-0.0210223],[-0.0475849,-0.0116421,-0.1009642,0.0060242,-0.0551623,-0.0944078,-0.0198151,-0.0031668,0.0016031],[-0.050367,0.0105575,-0.0875667,-0.0152735,-0.0239448,-0.0418091,-0.0053007,0.001533,-0.0102544],[0.0757692,-0.0458161,0.1289296,0.0285464,0.0430798,0.0340102,0.0640573,0.016857,0.020364],[-0.041687,0.0125507,-0.0857007,0.0333147,-0.0398064,-0.0515951,-0.0424136,0.0102991,0.0076292],[0.0905472,0.0596753,0.105184,0.0442779,0.0126787,0.0042282,0.0021641,0.0146834,0.0068399],[-0.0945952,0.0091502,-0.0496813,-0.0057069,-0.0553016,-0.0873032,-0.0129566,0.0007921,-0.008737],[-0.0473176,0.024566,-0.0811772,-0.0035593,-0.0324249,-0.0725792,-0.0331814,0.009749,-0.0320311],[-0.1474069,-0.0371228,-0.1815634,-0.0203736,-0.0452941,-0.0875204,0.0199887,0.0204952,-0.0396032],[-0.0316425,0.0501095,0.0611824,0.1074226,0.0336904,0.0239495,0.0066556,0.0190813,0.0193172],[0.0690867,0.0038057,0.0809423,0.0275481,0.0151531,0.1388927,-0.0235078,0.0081349,0.0749149],[-0.1697722,-0.0277931,-0.1370773,-0.0014203,-0.0788787,-0.0786492,0.00489,0.0120902,0.0133127],[-0.1088181,-0.0353339,-0.0909161,-0.0160477,-0.0707457,-0.0995923,-0.0344376,0.0032071,-0.0235415],[0.1264742,0.0490431,0.122426,0.0462428,0.0683197,0.0485545,0.023648,-0.0124284,-0.0124545],[-0.0147171,0.0224629,0.0231632,0.0257008,-0.0270456,0.011648,0.0068169,0.0031189,0.0180061],[-0.0231586,-0.0221954,0.0272688,0.0402275,-0.0376086,-0.0206942,0.0188076,0.0053664,-0.0280506],[-0.0249974,-0.0021313,-0.0853114,-0.0219812,-0.0221732,-0.0636259,-0.0155067,0.0249484,0.0147185],[-0.0817758,-0.0400737,-0.0625322,-0.003382,-0.0247267,-0.0101519,0.0290643,0.0132482,0.011791],[-0.0998387,-0.0703822,-0.1613568,-0.110453,-0.1060406,-0.1546576,0.0686953,0.0158705,-0.0672031],[0.0524647,-0.0086098,0.0962172,0.026112,0.0282705,0.0620861,-0.0463768,0.0276985,0.0247338],[0.0960519,0.0581569,0.083473,0.0718209,0.0459639,0.1049108,-0.0187735,-0.0247566,0.0364802],[-0.00188,0.023542,0.062256,0.0611943,0.0131506,0.0813784,0.0165816,-0.0097379,-0.0040794],[-0.0176664,-0.007726,-0.0355743,0.0132746,-0.0429089,0.0329249,0.0129055,0.0067337,0.0069615],[-0.0414989,0.0016062,-0.0647258,0.0060678,0.0071487,0.0157536,0.0495488,0.0090066,-0.0139545],[0.0345865,0.0473117,0.0869053,0.0748731,0.0546848,0.0593998,0.0205699,-0.0240576,0.0240676],[-0.0816142,-0.0342821,-0.0216335,0.0352,0.0065114,0.0061926,0.0191641,0.0248764,0.0155897],[-0.0241994,0.0050076,-0.0584705,-0.0330477,0.010961,-0.0166443,0.0586805,0.005602,-0.0051583],[-0.0924807,-0.0572888,-0.0848032,-0.0221469,-0.0430544,-0.075357,-0.037054,0.0141167,-0.073735],[-0.0549901,-0.0929573,-0.1537045,-0.1485819,-0.0972993,-0.0763711,-0.0346637,0.0236934,-0.0436822],[0.0029908,0.0075392,-0.0004659,-0.004444,0.000123,0.0153189,0.030308,0.0216188,0.0285207],[-0.1037284,-0.1111722,-0.0722337,-0.0714432,-0.1057682,-0.1078982,0.0345324,0.0269622,-0.013129],[0.0917309,0.0740782,0.0505771,0.0150422,0.0537174,0.0652929,-0.0179261,-0.011065,-0.0087299],[0.0543147,0.0629936,0.0991331,0.0797225,0.0480951,0.0690408,0.0012589,-0.0099056,0.0619483],[-0.0690768,-0.0434548,-0.0689666,-0.0427787,-0.0318095,-0.0290372,0.0939808,0.0259839,0.0139791],[-0.024266,-0.0242052,-0.0271665,-0.0281497,-0.0351679,-0.0051022,0.0577503,-0.0030425,0.0332923],[-0.0045918,-0.026667,-0.0266613,-0.0336336,-0.0205407,-0.0308508,-0.0494364,0.0172058,0.0123325],[0.0186113,0.0016693,0.0151408,0.010686,-0.0193,-0.0288978,-0.0357194,-0.0041622,0.0287638],[0.0739361,0.0879659,0.0946372,0.0949839,0.0966208,0.0886385,0.0032597,0.0046525,0.0593297],[0.0499166,0.0645649,0.1126921,0.1021063,0.0637897,0.071676,0.0765027,0.028841,0.0103287],[0.0137694,0.0124958,0.019267,0.0169387,0.0279018,0.0572573,-0.0495267,-0.0061245,0.0287605],[0.0248819,0.0148143,0.075593,0.049851,0.026655,0.0622317,0.0229503,-0.0439228,-0.0109907],[0.0248713,0.0155857,0.0537127,0.0379788,0.0298762,0.0672247,0.0598279,0.0059328,0.0114944],[-0.0107123,-0.0097645,-0.0252943,-0.0115271,0.0282835,0.00808,0.0260951,0.0301531,0.0273329],[0.056168,0.0611295,0.0863834,0.0815086,0.0647374,0.0847042,-0.0028545,-0.0152572,0.0201952],[0.0104544,0.0135623,0.032597,0.0381621,0.0217731,0.0117239,0.0361744,0.001248,0.0151615],[0.0345831,0.0615825,0.0048131,0.0363486,0.076896,0.0760532,0.043451,0.0088544,0.0226464],[0.0204237,0.0175929,0.052535,0.0344861,0.0158176,0.0329945,-0.0312914,0.0085205,0.0190824],[0.0063519,0.0214298,-0.001587,0.0194923,0.0253907,0.0452882,-0.0156541,0.0123927,-0.002509],[-0.0185683,-0.00876,0.0046427,0.0135714,0.0062576,0.0118854,0.0764862,0.0093855,0.0067927],[-0.0116254,-0.0244476,-0.0502156,-0.0517155,-0.0310531,-0.0818767,-0.0930941,-0.0321637,-0.0068033],[0.0186396,0.010306,0.0198867,0.0120605,0.0031385,-0.019795,0.0227537,-0.0034366,-0.01694],[0.0124945,0.0236275,0.0332766,0.0507905,0.0219972,0.0056252,-0.0032866,0.0040168,0.0143406],[-0.0565323,-0.0139957,-0.0897625,-0.0459631,-0.0291423,-0.0181598,-0.0081167,0.0095188,0.0135963],[-0.0049371,0.0142144,-0.0215864,0.0097895,0.0081496,0.041823,0.0480757,0.0206825,0.0196147],[0.0095092,0.0154992,0.055298,0.0395269,0.032504,0.0579072,0.0204953,0.0025714,0.0145211],[0.0155971,0.0166429,0.0242943,0.0155041,0.0345924,0.0241499,0.0246264,0.0079282,0.0180649],[0.0343972,0.0504904,0.0844992,0.0883461,0.0695452,0.0926484,0.0522693,-0.0134336,0.0120566],[0.0391191,0.0333195,0.0359201,0.0236784,0.0433853,0.052345,-0.0277193,0.0099129,0.0149077],[-0.0333475,-0.0177474,-0.0450644,-0.0387192,-0.0174032,0.0009324,-0.0361501,0.007298,-0.0012999],[0.0106405,0.033134,0.0137014,0.0198348,0.0493015,0.0859862,0.0308803,-0.0081626,0.0147078],[-0.0182441,-0.0137709,-0.03757,-0.0206963,-0.0269589,-0.0658673,-0.0167566,-0.0032555,-0.029079],[-0.019044,-0.017898,-0.0636494,-0.0515893,-0.0246342,-0.0266082,0.014124,0.01758,-0.0097499],[0.0483834,0.0240667,0.0705046,0.0609888,0.006368,0.0348801,-0.0394797,0.012214,0.0177573],[-0.0036882,0.0109432,0.0323175,0.0441786,0.0189669,0.0350277,0.0437388,0.0061291,0.0196235],[0.0488749,0.0289257,0.0698821,0.0568996,0.0369581,0.0706298,-0.0130884,-0.0135584,0.0174845],[-0.0128935,-0.0043246,-0.0141678,-0.0229618,0.0258132,0.0089714,0.012564,0.0158819,0.0019079],[0.0045892,0.0139787,0.0079195,-0.0016555,0.0516599,0.0933008,0.0783548,-0.0132695,-0.0099755],[-0.0097269,-0.025388,-0.0369543,-0.0251335,-0.0363905,-0.0652767,-0.0087577,-0.0078221,-0.0069806],[0.0431023,0.0326245,0.056612,0.040293,0.0336905,0.0828464,0.059954,0.004851,0.005221],[-0.003197,0.006075,-0.0015999,-0.0078283,0.0484857,0.0618762,0.0485114,0.0103632,0.0085883],[0.0175122,0.0388438,0.0964588,0.0827052,0.0694333,0.1103588,0.1003868,-0.0029801,0.015955],[-0.0016683,0.0060744,-0.0053638,-9.95e-05,-0.0028653,-0.0016976,-0.0129197,0.0014554,0.0066753],[0.0147499,0.0135331,0.0486004,0.0484287,0.0292805,0.0092564,0.0393554,-0.0107901,0.0059877],[-0.0013596,0.0254127,-0.0029662,0.0026724,0.0514747,0.0710894,0.1212713,-0.0041209,0.0061611],[-0.0339276,-0.0252928,-0.0703765,-0.0414236,-0.0460518,-0.1046444,-0.0141039,0.000331,-0.0001344],[-0.0039672,0.0063707,0.0005905,0.0121888,-0.0008927,-0.0019912,-0.0454898,0.003187,-0.0035083],[-0.019046,0.0243084,-0.0519517,-0.0139282,0.010252,0.014489,0.0339368,0.0123846,0.0097891],[0.0311969,0.0167284,0.0292179,0.0298685,0.0285037,0.0259065,-0.014841,0.0146769,0.0162178],[0.0274619,0.0198875,0.0067448,0.0099369,0.0007795,0.0084819,-0.0462299,0.0092847,0.0141778],[0.035152,0.0327378,0.0647948,0.0508864,0.0408118,0.0478298,0.0138726,0.0050769,0.0136024],[0.0198015,0.0228063,0.0237041,0.0283806,0.0363321,0.074285,0.0682493,0.0104466,0.0168039],[0.0033234,0.0222743,-0.0024459,0.008633,0.0315419,0.0477681,-0.0174383,-0.0082205,0.0109793],[0.025707,0.0127804,0.0185899,0.0149824,0.0035588,-0.011565,0.0259149,-0.0015932,0.0111655],[-0.0188292,-0.0155846,-0.0031951,-0.0122943,0.0061698,-0.0061065,0.0247244,0.0165831,0.0139846],[0.0053667,0.0154358,0.0092359,0.0120403,0.0282812,0.0395916,-0.0082916,-0.0004871,0.0010592],[0.0470638,0.0369487,0.0262505,0.0104798,0.0463914,0.0463119,0.0220699,0.0051514,0.0129946],[0.0359701,0.0360591,0.0455115,0.0366949,0.0274857,0.0500904,-0.0264574,-0.0089771,0.0074748],[-0.0149358,-0.023396,-0.0056579,-0.023035,0.0085599,0.0466821,-0.0164269,-0.0004349,-0.0179597],[-0.0156301,-0.0462517,-0.0519348,-0.0852962,-0.0028909,0.0531989,0.0225506,0.0165815,-0.0354107],[0.015929,0.0109852,0.0250483,0.0200218,-0.0151863,-0.0207338,0.0135481,0.0156757,0.0136354],[0.0418729,0.0343133,0.0290512,0.0044946,0.0663337,0.1106478,0.1044111,0.0053926,0.0261728],[0.0340113,9.27e-05,0.0450246,0.0108864,0.0559229,0.1116492,0.0715438,0.0078654,0.0059954],[-0.035582,-0.0488989,-0.0690624,-0.074993,-0.0447032,-0.0706563,-0.016629,0.0306898,-0.0216925],[-0.003688,-0.0098365,0.006198,-0.0087253,-0.0140413,0.0056629,0.0640036,0.0008007,0.0029179],[-0.0779797,-0.0400627,-0.0917441,-0.0410793,-0.0969149,-0.1253494,0.1108312,0.0253866,-0.0133475],[-0.0198818,-0.0419045,-0.0346285,-0.0397489,0.0289108,0.0730752,0.0516143,0.0113961,-0.0136407],[-0.0061017,-0.0075357,-0.0058446,0.0150226,-0.0213686,-0.0526569,-0.0585276,0.0069368,-0.0034459],[0.0524524,0.0487249,0.0513837,0.0316237,0.0614893,0.0812601,-0.0429163,-0.0171863,0.0430969],[0.0366532,-0.0016101,0.0566445,0.0341864,0.0175413,0.0192561,0.0101988,-0.0116742,0.0036113],[-0.0720233,-0.095727,-0.0596139,-0.0959462,-0.0819549,-0.099868,0.0438804,0.0078561,-0.0279555],[-0.0190368,-0.0036524,0.0232515,0.0512365,-0.0357251,-0.0370745,-0.0122109,0.0042271,-0.0133221],[0.0107679,0.0169879,0.0248258,0.0474739,-0.0463743,-0.0794982,-0.090745,0.0124929,0.0035009],[-0.1158743,-0.0735488,-0.1130276,-0.0468881,-0.1498529,-0.1749064,0.0478855,0.0061209,-0.0797745],[-0.1760894,-0.1731188,-0.2171539,-0.1997869,-0.220064,-0.2734812,-0.168896,-0.0011023,-0.1590679],[-0.079532,-0.0717088,-0.1210312,-0.1158289,-0.0572619,-0.075165,0.1301375,0.0530708,-0.0931319],[0.0180523,0.0137918,0.0541763,0.0612826,0.0575542,0.0805263,0.0782348,0.0338762,0.0768359],[-0.0481044,-0.1149857,-0.0760791,-0.1428834,-0.0883548,-0.0656415,0.0519245,-0.0291606,0.0599398],[-0.0752955,-0.1336242,-0.1035819,-0.1389891,-0.0929255,-0.0567387,0.0155952,-0.0052599,-0.0310274],[0.089191,0.0854889,0.0897458,0.0886306,0.0810548,0.1443765,-0.024376,0.0217876,0.0318892],[0.0959745,0.1071717,0.1504914,0.1586603,0.137491,0.165989,-0.0338826,-0.0182416,0.1210466],[0.0495358,0.0618174,0.038713,0.0216095,0.1370104,0.171871,0.1024319,-0.0100907,0.0672843],[0.0111862,-0.0074558,0.0324011,-0.0031925,-0.0106233,-0.0131865,-0.0538001,-0.0021196,0.0286395],[0.0709986,0.0818476,0.077543,0.1156311,0.0980725,0.1129549,0.0296816,0.0041845,0.0608607],[0.0207284,0.0522639,0.0097594,0.0473305,0.0373641,-0.0033511,-0.0029455,0.0089046,0.0186485],[0.0425352,0.0386409,0.0655101,0.0501202,0.0516288,0.0909767,0.0594098,0.0077806,0.0569484],[-0.0135722,-0.0306028,-0.069568,-0.0664234,-0.0122649,0.0013498,0.0374615,-0.0004875,0.0179465],[0.0613819,0.0560895,0.0306188,0.0316566,0.0290289,0.0430247,0.1283466,0.0139231,0.0100744],[0.030872,0.0176464,0.0855713,0.0756285,0.0216233,0.0411668,-0.0700643,-0.0261213,0.0328078],[-0.0436362,-0.0281205,-0.044775,-0.0293505,-0.0488867,-0.0561708,-0.0143849,0.015806,0.0126511],[0.0343208,0.0315521,0.043509,0.0463614,0.0001974,0.0033877,0.033657,0.0039522,0.0017458],[0.0578086,0.0650834,0.0789988,0.0831603,0.0687336,0.0808972,-0.0038834,-0.0084703,0.0313516],[0.0111598,0.0258632,0.0419728,0.0699614,-0.0082017,0.0123085,0.0590883,0.0104795,0.0234394],[-0.0763426,-0.082192,-0.0661417,-0.0845058,-0.1040018,-0.086956,0.0316107,0.0171048,-0.035934],[-0.0550648,-0.0562911,-0.0671305,-0.0872943,-0.0122524,-0.0069799,0.0214421,0.0185691,0.012449],[0.0713194,0.067658,0.0660704,0.0713718,0.0905908,0.0837686,-0.0494052,0.0068202,0.03556],[-0.0466907,-0.0427947,-0.0729147,-0.0751988,-0.027157,-0.0192588,0.0562235,0.0200794,0.0003601],[0.1064503,0.0775738,0.1415434,0.107369,0.0998267,0.1112913,0.0490139,0.0002113,0.0301301],[0.0477588,0.0300122,0.0430246,0.038734,0.0341726,0.0291288,0.0388677,-0.0015793,0.0258228],[0.0116142,-0.0052861,0.0435833,0.0254345,-0.0382328,-0.0263364,0.0197366,-0.0069883,-0.0116808],[0.0550608,0.0788971,0.0760451,0.0830904,0.0788497,0.0729947,0.025371,-0.0179906,0.0181318],[0.0254493,0.0226172,-0.0055731,0.000545,0.0098728,-0.0274458,-0.0624173,-0.0002495,0.0220609],[0.032726,0.036886,0.0587953,0.0507758,0.0265719,-0.0097947,0.0590164,-0.0007434,0.0131027],[0.0012215,0.0039813,0.037512,0.0138879,-0.0017417,0.0589369,0.0147875,-0.0006082,0.0032373],[0.0334883,0.0266267,0.0360315,0.0162473,0.0493716,0.0313599,0.0918168,0.0115357,0.0154985],[-0.0108871,-0.0105709,-0.0195192,-0.0179136,-0.0275939,-0.0260576,-0.0178871,0.0156156,0.004876],[-0.0143425,-0.0205024,-0.0213678,-0.0246023,-0.014018,-0.0147731,-0.0231486,-0.0033798,-0.0097358],[-0.010023,-0.0331712,-0.0392003,-0.0330675,-0.0133435,-0.0038732,0.0845699,0.0182245,0.0115933],[-0.0527749,-0.062422,-0.0856498,-0.0883359,-0.0853215,-0.0890682,0.1219999,0.0277752,-0.0400261],[-0.0736849,-0.0755665,-0.1149576,-0.1092255,-0.1107114,-0.1456483,-0.1105201,0.0174653,-0.0326886],[0.1097376,0.1144743,0.1586,0.1441033,0.1053063,0.131962,0.0559863,-0.0081541,0.0599253],[-9.76e-05,-0.0051964,-0.0052665,-0.0020026,-0.050579,-0.0660361,0.018458,0.0074623,-0.021558],[-0.0032161,0.0201597,-0.0022414,0.0156346,-0.0106569,-0.0104131,-0.1038967,0.0096616,0.0265622],[0.059691,0.037829,0.0748004,0.0664728,0.0679289,0.1129507,0.1104536,0.0042288,0.0303657],[0.0478236,0.0398612,0.0329406,0.014876,0.0564947,0.0593588,-0.0235936,-0.0071233,0.0237461],[0.0328921,0.02968,0.0203134,0.0310129,-0.0131588,-0.0332568,-0.0168615,-0.0100332,-0.0013943],[-0.0015452,-0.0101915,-0.0164182,-0.0144712,-0.0150969,-0.011686,-0.0020382,0.0145443,0.0104678],[-0.0641469,-0.0586412,-0.0712642,-0.0610203,-0.1123825,-0.111555,-0.062616,0.0171427,-0.0130563],[0.0271537,0.0496402,0.0515924,0.0482125,0.0594644,0.0391185,0.0236717,-0.0034775,0.0211125],[0.0134042,0.0103402,-0.0174444,-0.0102195,0.0144046,0.0202415,0.0107233,0.0100648,0.0190263],[0.0269012,0.0217236,0.0359337,0.0308538,0.0213563,-0.0030124,0.0478576,-0.0012865,0.0117063],[0.0196085,0.0317392,0.0299998,0.0356253,0.0378181,0.060573,0.0475219,-0.0030588,0.0139177],[-0.0291877,-0.0049261,-0.0310967,-0.0125419,0.0040044,-0.00595,-0.0291155,-0.0016938,0.0087817],[0.0167459,-0.0004031,0.0077098,0.0030652,0.0197298,0.0127514,-0.0032953,0.0052015,0.008003],[-0.0002652,0.02067,0.0293004,0.0421312,0.035172,0.0503652,-0.0231081,-0.00435,0.0157548],[0.0428586,0.0649905,0.0658008,0.0595984,0.0406799,0.0133418,-0.0069538,-0.0080744,0.0134052],[0.0124437,0.0143441,0.0106287,0.0114126,-0.0103259,-0.0130093,-0.050544,0.0052835,0.0050794],[0.0375136,0.0396146,0.0510382,0.0416449,0.0027995,-0.0169861,0.0113256,0.0009812,0.0101808],[0.0212262,0.0151192,-0.0065525,-0.0009675,0.0374945,0.0078499,-0.0756119,0.0088901,0.0180906],[0.0185755,0.0259672,0.050734,0.0298647,-0.0205454,-0.0252471,-0.0602082,-0.0170751,-0.0057956],[-0.0188229,-0.0088198,-0.0062275,-0.0040773,-0.0445343,-0.0631488,-0.110441,-0.0110054,-0.0262255],[0.0530254,0.0540034,0.0756451,0.0642536,0.044293,0.0109574,0.0733397,-0.0010885,0.0189567],[-0.0171306,-0.0379387,-0.0195523,-0.0442318,-0.0134375,-0.0168001,0.0529783,-0.0048592,-0.0060787],[0.0445668,0.0250433,0.0695923,0.0577123,0.0700284,0.0653468,-0.0474747,0.0069934,0.0099308],[0.044239,0.0437989,0.0182232,0.032491,0.0369496,0.048814,-0.004492,0.0048243,0.0250543],[0.0282148,0.0278882,0.0410626,0.038993,0.0020141,-0.0146169,-0.0526885,-0.0032713,0.0050774],[0.0285687,0.025324,0.0204536,0.0189116,0.0093662,-0.0128398,-0.0412574,-0.0090711,0.0053949],[-0.0285066,-0.0355155,-0.0172724,-0.0386866,-0.0452629,-0.0655084,0.0357095,0.0135669,0.0070156],[0.0514766,0.0432316,0.048337,0.0457668,0.0504888,0.0325942,0.0657587,0.0027223,0.0202286],[-0.0100838,0.0238772,-0.0246345,0.0123719,0.0035065,0.0307971,-0.0319514,-0.002857,0.0023623],[4.05e-05,0.0094967,-0.0513477,-0.0257371,0.0139275,0.0037442,0.0059112,0.005519,0.0063338],[0.0311656,0.0146412,0.0096504,0.0063388,0.0206547,0.0351397,-0.0324559,0.0094183,0.009203],[0.019489,0.0261237,0.0620435,0.0442247,0.0171214,0.0269901,0.0621359,-0.0014235,0.0083516],[-0.015307,-0.0170511,-0.0605744,-0.0604746,-0.0094855,0.0201251,-0.0337068,-0.0016292,-0.0133346],[0.045816,0.0367534,0.0557698,0.0434664,0.0059099,0.0228927,0.0036879,0.0105489,0.0158473],[-0.0145079,-0.020622,-0.053546,-0.0674642,-0.0479208,-0.0738989,-0.0614999,-0.0054741,-0.0209336],[0.0263505,0.0224546,0.0620324,0.0698589,-0.009672,0.0119239,-0.0291437,0.0097424,0.0118907],[0.0316836,0.0204736,0.0064631,-0.0046481,0.0076647,-0.0105743,-0.0047402,0.0080642,-0.0072847],[-0.010421,0.0061261,0.0296588,0.027318,-0.0355006,-0.045157,0.014554,0.0014243,-0.0144757],[-0.0153152,-0.0399777,-0.0228188,-0.0416253,-0.0012646,0.0059239,0.0839434,0.0258662,0.0066008],[0.0666502,0.0483807,0.0719645,0.0464317,0.0536583,0.0307442,-0.0550012,-0.0154445,0.0241035],[-0.0113766,-0.0136181,0.0179545,0.0168569,-0.0151179,-0.0140495,-0.0244069,0.0063085,-0.0054756],[0.0050059,0.009346,-0.029418,-0.0213629,0.0511345,0.0771584,0.0006759,-0.0052614,0.0120706],[0.0140753,0.0120178,0.0367454,0.0082845,-0.0145737,-0.0398246,0.0052433,-0.0018006,0.0030322],[-0.0176164,-0.0199682,0.0134428,0.0013064,-0.0274222,-0.0251246,-0.0153119,-0.0088267,-0.014884],[0.0339108,0.0043859,0.0040822,-0.0275839,-0.0025404,-0.0687712,-0.0652962,0.0083365,-0.0058245],[-0.0607288,-0.0595539,-0.0757802,-0.04911,-0.076109,-0.0901053,0.0357091,0.0004371,-0.0174186],[-0.0247378,-0.0301891,-0.0631547,-0.0346166,-0.0457257,-0.0297149,-0.0174813,0.0087761,-0.0260243],[0.0861058,0.0754545,0.0567267,0.05599,0.0746185,0.0714124,0.0242312,-0.0036606,0.0274913],[0.0028073,0.0038268,0.0366449,0.0284274,-0.0202961,-0.0389442,-0.0677168,-0.0040901,-0.0222256],[-0.0146748,-0.021604,-0.0476986,-0.0527194,-0.0183786,-0.0211867,-0.0034468,-0.0016381,-0.0251859],[-0.0558279,-0.0516663,-0.1083833,-0.0671796,-0.0678861,-0.0649085,0.0538215,0.0212967,-0.0160728],[-0.0004922,-0.0002546,-0.0071656,0.0067788,-0.011032,-0.0017542,0.1077257,0.0089118,0.0057164],[0.0674415,0.0720356,0.0766053,0.0828863,0.0821376,0.1323575,-0.0047793,0.0015832,0.0444466],[-0.0091314,0.021005,0.0099708,0.0211809,0.0270767,0.0056394,0.0493044,-0.0010523,0.03915],[0.0194187,0.0155378,0.0269413,0.01832,-0.0157714,-0.0370901,-0.0604625,-2.74e-05,0.006175],[-0.0039274,0.008643,-0.0046009,0.0030004,-0.0146909,0.040973,0.0876971,0.0220763,0.0092026],[0.0472019,0.0290343,0.0653887,0.0539528,0.0501753,0.0528139,0.0222256,0.0040513,0.0270363],[-0.0049685,0.0077129,0.0106305,0.0248392,0.0066467,0.0251949,-0.0313111,-0.0054969,0.0209225],[0.0036585,-0.0020811,0.0143975,0.0078818,0.0128388,0.0131955,0.0052713,-0.0013226,0.0066637],[-0.023484,-0.0154798,-0.062144,-0.0328682,-0.0141682,0.0024733,-0.0293798,-0.0110067,0.0038596],[0.0217578,0.0571076,0.0892916,0.1326301,-0.0227472,-0.0459908,-0.0814353,-0.0266828,-0.0047444],[0.012377,0.0248709,0.013638,0.0412685,0.0260133,0.0030701,-0.0219059,-0.0010551,0.0184561],[0.033699,0.0071291,0.0162278,-0.0071525,0.0355511,0.0547217,0.0550937,0.0022613,0.0145216],[0.0415322,0.0359126,0.0244573,0.0144514,0.0162023,0.0305766,0.031155,0.004935,0.0145528],[0.0115626,-0.0101897,0.0118441,-0.0084652,0.0265144,0.0255631,0.0006088,-0.0004573,-0.0022282],[0.0228702,-0.0018728,0.0184166,0.003937,0.0220451,0.0221165,0.0152738,0.0069466,0.0115471],[0.0260005,-0.0009794,-0.0090943,-0.0311408,0.0335468,0.0297471,0.0005046,0.0065269,0.0086928],[-0.002634,0.0163406,0.0344162,0.0349485,0.0035637,0.0107783,-0.0215222,-0.0016189,0.0013521],[0.0265786,0.0132929,0.0084939,0.0063269,0.0371709,0.0604272,0.0224144,0.0016672,0.0110757],[0.0183313,-0.0116483,-0.0011705,-0.0245786,0.0056121,0.0226795,0.0409551,0.0108253,-0.0003897],[0.0130026,0.0296167,0.0544463,0.0707864,0.0190564,-0.0037632,-0.0315416,-0.0085711,0.008978],[0.0387466,0.0072614,0.0154928,0.0012932,0.0189819,0.0351208,-0.0064856,-0.0012103,0.0042249],[0.0303794,0.0306105,0.02862,0.028977,0.0083666,0.0020513,0.0028,-0.0013758,-0.0025551],[0.0077849,0.0144489,0.0011497,-0.009634,0.0228477,0.0369523,0.0217959,0.0030884,0.0030246],[0.0708259,0.0386579,0.0389821,0.0122726,0.0557939,0.0832452,0.0324992,-0.0135844,0.005995],[-0.0262314,-0.0477528,-0.0286122,-0.0496018,-0.0469678,-0.0463176,-0.0199459,-0.0075335,-0.0084979],[-0.0274227,-0.0175882,0.0134643,0.0123517,-0.0166407,-0.0182989,0.0054388,0.0094303,-0.0060412],[0.0034931,0.0032943,0.000979,0.0173379,0.0168205,-0.0042507,-0.0076123,-0.0080997,0.0065072],[0.0438315,0.0059296,0.0629609,0.0581736,-0.0220581,-0.0351827,-0.0128327,0.0089777,-0.0002775],[0.0096289,0.0024766,0.0078217,0.0060257,-0.0183005,-0.0408637,-0.0353559,0.0002069,0.0040148],[0.0293563,0.0395776,0.0171278,0.0176554,0.0242851,0.0228521,-0.0227128,-0.0041837,0.0109109],[0.0546759,0.0147824,0.0621854,0.0238159,-0.0205941,-0.0267838,-0.0187885,0.0076499,0.0073795],[0.0055893,0.0019789,-0.0234052,-0.0248123,0.005133,-0.0049512,-0.0085501,-0.0093375,0.0055657],[-0.0894268,-0.0517755,-0.1265369,-0.0895348,-0.081143,-0.0867505,0.0200524,-0.0047775,-0.0159847],[0.0106203,0.0298386,0.0155239,0.0160535,0.0096993,0.0412758,0.0047417,0.0088759,-0.0086023],[-0.0859239,-0.0961253,-0.1168509,-0.1209884,-0.0447727,-0.0256899,0.0507734,0.0215155,-0.0214131],[0.0898867,0.077838,0.1154715,0.1093254,0.0758263,0.0875574,0.0302225,0.0047076,0.0452036],[0.0357752,0.0319471,0.0643966,0.0388683,0.0198098,0.0021998,-0.0060019,-0.0027108,0.016631],[0.0284631,0.0063578,-0.0135358,-0.0288477,0.0070199,0.0086776,-0.0159443,0.01909,0.0094043],[0.0451802,0.0354731,0.030451,0.0378169,0.0271464,0.0212463,-0.0068478,-0.0027732,0.0142192],[-0.0631737,-0.0643034,-0.0741904,-0.0816781,-0.0526553,-0.0722695,0.0171792,0.0235006,-0.011887],[0.0686767,0.071783,0.0770187,0.0636539,0.0607987,0.0632632,0.0796351,0.0092285,0.0227932],[0.022581,0.0082898,0.0097175,0.0016088,-0.0117186,-0.0114444,0.003001,-0.0011789,0.0056356],[-0.0076587,-0.029408,-0.0431737,-0.0558149,-0.0305381,-0.0484676,0.0754007,0.0339973,0.0040029],[0.0001242,0.0356773,-0.0082099,0.0513475,0.0263432,0.0194298,-0.0314987,-0.0084596,0.0036425],[0.0281917,0.01398,0.0284549,0.0242221,0.0350481,0.0422729,0.0275044,0.0006824,0.0027596],[0.0443626,0.0308968,0.0587449,0.0232777,0.009078,-0.0013013,-0.0323928,-0.0030079,0.0032677],[0.0301709,0.0273878,0.0229116,0.0349949,0.0436448,0.0751866,0.0364008,-0.0056144,0.0199907],[0.0223267,-0.0215766,-0.0110133,-0.0539868,-0.0267002,-0.0465632,0.0473812,0.0244369,0.0002657],[-0.0681016,-0.0968491,-0.0722443,-0.0972341,-0.0790445,-0.052596,-0.0021835,0.0265067,-0.0141022],[-0.0983669,-0.1708907,-0.1909796,-0.2467617,-0.1440221,-0.1537798,-0.0053667,0.0289241,-0.1145938],[0.1479714,0.1124238,0.1489593,0.1233563,0.0769027,0.091783,0.0693136,0.0063609,0.0450551],[0.0671336,0.0342716,0.0944979,0.0287012,0.0332571,0.0078942,0.0259532,-0.0025345,0.0440515],[0.0435451,-0.0066395,0.0384266,0.0289532,0.0456996,0.0740301,0.029296,0.0009363,0.0097908],[0.076939,0.0395322,0.0343645,0.0206274,0.0451169,0.0902299,0.1094354,0.0114272,0.0468793],[0.1031926,0.0413512,0.0586624,0.0538713,0.0431505,0.0223707,-0.0040792,-0.0109527,0.0095073],[-0.0470503,-0.0245618,-0.0214289,-0.0465322,-0.0240585,-0.0158115,-0.0416607,0.0013852,-0.0102875],[-0.0339617,-0.0131419,0.0075979,0.0357652,-0.0213349,0.0207552,-0.0037172,-0.0094274,0.0050766],[0.1023909,0.134508,0.1762717,0.1929006,0.1346512,0.0925507,-0.0542152,0.0034814,0.0395602],[0.0459911,0.0382686,0.0934421,0.0792044,0.0547913,0.075158,0.0683249,-0.0023155,0.0188248],[-0.0074399,-0.0092623,0.0482141,0.0526068,0.0020691,0.0298644,-0.0267125,-0.0095647,0.0033062],[-0.0002313,0.0604207,0.0330105,0.0939388,0.0199858,0.0076734,-0.0614889,-0.0181465,0.0036747],[0.0171803,0.0588416,-0.0314689,0.0521903,0.0136284,-0.0148247,-0.0151842,-0.0154163,0.0014951],[0.0680388,0.0399912,0.0218035,0.0202272,0.0300733,0.0250479,0.0359663,0.0075004,0.0108613],[-0.0138314,0.0233441,-0.0285595,0.0311157,0.0319524,0.0234376,0.0778575,0.0034468,0.0029578],[0.0627377,-0.0114514,0.0468955,-0.0060595,-0.0060475,0.0021772,-0.0717196,0.006426,0.0133942],[0.0329565,0.0079924,-0.0364213,-0.0357943,-0.0161593,-0.0667995,0.0249024,0.0136081,0.00381],[0.0373887,0.0198147,0.0181643,0.0267407,0.0192779,0.0264354,-0.0003142,-0.0017529,0.005136],[-0.0560118,-0.0348292,-0.0383507,-0.0200343,-0.0311413,-0.0393344,-0.0312469,-0.0108369,-0.0001064],[0.0866154,0.0507776,0.0468249,0.0381287,0.0240643,0.0099936,0.0150431,-0.0007053,-0.0017144],[0.0061123,-0.0352583,-0.0489725,-0.0344474,-0.0447806,-0.0406988,-0.0049681,0.0076551,-0.0097259],[0.0211431,0.0629477,0.0044337,0.0407605,0.0418044,0.019751,0.030814,-0.0051336,0.0187448],[-0.0858265,-0.0232977,-0.1340298,-0.0583171,-0.036749,-0.0189746,-0.0175104,-0.0189444,-0.0273418],[-0.0424737,-0.0115543,0.0043238,0.016547,-0.0195261,-0.0300578,0.06222,-0.006589,-0.0102668],[0.0391176,0.0282191,0.004553,0.0194983,0.002649,-0.0222007,0.0149032,-0.0311357,-0.0114663],[-0.1207615,-0.0564044,-0.1226926,-0.0776059,-0.0621799,-0.0554738,-0.020909,-0.0309798,-0.0355579],[-0.0232363,0.0194228,-0.0189467,0.0191097,0.0082026,0.004619,-0.0314086,0.0018274,0.0024523],[-0.0792184,-0.0874187,-0.0619033,-0.0988056,-0.0855934,-0.0657305,-0.0163714,-0.0087973,-0.0673311],[0.120021,0.0663128,0.1119623,0.0968167,0.0346545,-0.0016773,-0.0228687,0.0159413,0.0590346],[-0.0465733,-0.0297868,-0.0093997,-0.0316216,-0.0318153,0.0045191,-0.0310883,-0.0248086,-0.0230459],[-0.0972471,-0.0876989,-0.0899598,-0.1017152,-0.0991099,-0.1167461,-0.0294733,-0.0345358,-0.0397156],[0.0584484,0.1025294,0.0949215,0.1258924,0.0299903,-0.0309105,-0.0162892,-0.0139366,0.0259852],[0.0455677,0.0624844,0.0160317,0.0303628,0.1183162,0.1484699,0.0826171,0.0267781,0.0217043],[-0.0765891,-0.0404578,-0.0641912,-0.0656757,-0.0070407,-0.0134813,0.0313822,-0.0051823,-0.0062416],[0.0833434,0.0518143,0.0994719,0.0954263,0.0812987,0.0790325,0.0572033,0.0250595,0.0380736],[-0.0118762,-0.035403,-0.010843,-0.0231164,-0.0348952,-0.0648167,-0.0526043,-0.0233993,-0.0128544],[0.0683309,-0.0046143,-0.024692,-0.0717923,0.0257652,0.0307576,0.0779235,0.0289446,0.0106871],[0.0098662,0.0150669,-0.0116186,-0.0249466,0.0181179,-0.0111294,0.0105216,0.005359,0.0099866],[0.0455781,-0.0385677,0.000152,-0.0198246,-0.0353631,-0.0165397,-0.0137035,-0.0116096,-0.0091619],[0.0683858,0.0664275,0.0829027,0.0793557,0.0454666,0.0389358,-0.0221019,-0.0075092,0.0167322],[0.0336895,0.0351649,0.0467532,0.0754522,0.0410467,0.0628733,0.023831,-0.0035401,0.0137958],[-0.0089788,-0.0269966,-0.0520797,-0.0481506,-0.044828,-0.0612854,-0.0126712,-0.0051823,0.0027704],[-0.0543836,-0.0385947,-0.0659605,-0.0521493,-0.0309034,-0.0256844,-0.0471913,-0.0220942,-0.0118283],[-0.0142376,-0.0352824,-0.0771386,-0.0596717,-0.0411742,-0.0387931,0.0731623,-0.0120832,-0.0116457],[0.10901,0.0754401,0.0908827,0.0897262,0.0902763,0.0801429,0.0264784,0.0347296,0.0453043],[0.044282,0.055157,0.1197484,0.1247034,0.0505105,0.03947,0.0130475,0.0336502,0.0372801],[0.024925,0.0010439,-0.0320688,-0.0454328,-0.0097467,-0.0463651,-0.0113719,-0.0028062,-4.03e-05],[0.0682269,0.0368759,0.0811938,0.0326742,0.025588,0.0477693,0.0023437,-0.0131193,0.0029195],[0.0176043,0.0499946,0.0279447,0.0438252,0.0324756,0.0253702,0.0907743,0.006426,0.0118331],[-0.0424159,-0.0427158,-0.0769987,-0.0637179,-0.0172095,0.0045628,0.025284,-0.023274,-0.0094019],[0.0598652,0.0316922,0.0536501,0.0467538,0.0299662,0.0059171,0.0179683,0.0145677,0.0109874],[0.0674313,-0.0094066,-0.0016738,-0.0168717,-0.0005734,0.0400491,-0.0002492,0.0100854,0.0094435],[-0.0170103,0.0511214,0.0818606,0.1218719,0.0235877,0.0037125,0.0519394,0.0218787,0.0194414],[0.0208279,0.0268258,-0.0110866,-0.0187874,0.0287543,0.0164486,0.0227938,0.0127924,0.0163099],[0.02833,0.0138799,0.0132895,0.0006378,0.0275791,0.067176,0.0524049,0.012023,0.016181],[-0.0033091,-0.0110058,-0.0132678,-0.0156434,-0.0485681,-0.0432105,0.0415208,-0.0238111,-0.0054061],[0.06486,0.0638408,0.1225944,0.0964106,-0.0088515,-0.0358181,-0.0367424,0.0077725,0.0115053],[0.0088266,-0.0685324,-0.0818811,-0.0833895,-0.0190747,-0.0008601,-0.007056,-0.0154079,-0.004264],[0.0197029,0.0462754,0.0316169,0.0205414,0.0405282,0.0180521,0.0662641,0.0051741,0.0136631],[-0.0359269,0.0040591,-0.0677253,-0.0382931,0.0140911,0.0050096,0.0212335,0.0215587,0.0067137],[-0.0842395,-0.0277781,-0.0758747,-0.0600112,-0.0012054,0.0066771,0.0929866,0.0022962,-0.0102226],[0.0177106,-0.0304784,-0.0064178,-0.0401607,0.0369108,0.0134633,0.052869,0.006334,-0.0002029],[0.0884806,0.0351147,0.0641927,0.0420004,0.0469407,0.0430815,0.0001642,-0.0102822,0.0167963],[0.0637567,0.0341735,0.058866,0.0494844,0.034476,0.0613647,0.0042228,0.0125444,0.0183918],[0.0377524,0.0057421,0.0170319,0.0176603,-0.002461,0.0201519,-0.0039992,-0.0039207,0.0045087],[0.0111797,0.0318706,0.0591447,0.0846698,0.0354226,0.0146589,0.0480314,0.0105541,0.0124967],[0.0530933,0.0147917,0.041544,0.0201021,0.0365859,0.0718319,0.1192042,0.0084713,0.0081582],[0.0363252,0.0044112,0.0323545,0.0025072,0.0203608,0.0418844,0.0373054,0.0061706,0.0015746],[-0.0181233,0.0265531,-0.0068467,0.0280482,-2.67e-05,-0.0238119,0.0590844,0.0061781,0.0057924],[-0.0061994,0.006742,-0.0128232,0.0018133,0.0302556,0.0303683,0.0188563,-0.0033034,0.0056658],[-0.0151287,0.0453946,0.0397084,0.0695334,0.0600075,0.0886207,0.1330889,-0.0009241,0.0050884],[-0.0335792,0.0259223,-0.0024308,0.0192299,0.0504211,0.0550319,0.0786028,0.0181779,0.0018503],[-0.0520857,-0.0483104,-0.0630331,-0.0364069,-0.1070101,-0.1302969,-0.1157185,-0.0173649,-0.0118239],[0.1189518,0.0815486,0.1478146,0.0971695,0.0972891,0.1473812,-0.0107561,-0.0007355,0.0169205]]};
+
+const PDEF = {name:"32-year-old professional",obj:"growth",risk:6,loss:20,ccy:"CLP",fx:976.44,note:"Prepay the mortgage only if the portfolio's expected real return (after tax and currency effects) falls below the ~4% real mortgage rate",liq:"car purchase within 12 months"};
+const OBJ = {growth:["Long-term growth","Maximise wealth over the horizon; accepts market swings for higher return."],balanced:["Balanced growth","Grow wealth while keeping a meaningful bond share to soften falls."],income:["Income","Steady yield matters more than growth; prefers bonds and high yield."],preserve:["Capital preservation","Protect the starting amount first; growth is secondary."]};
+const RISK = {0:["Conservative","6%","Small swings. About 1 negative year in 6 under the model."],3:["Moderate","9%","Moderate swings. A 2008-type year can still cost about a quarter of the portfolio."],6:["Medium-high","12%","Accepts equity-like falls in crises (GFC-type losses of 40% or more) for higher long-run return."],8:["High","14%","Close to an all-equity portfolio; deepest falls in crises."]};
+let S = JSON.parse(JSON.stringify({cap:DEF.cap,con:DEF.con,car:DEF.car,yrs:DEF.yrs,rf:DEF.rf,sell:DEF.sell,cur:DEF.cur,tgt:DEF.rec,preset:"rec",prof:PDEF,scen:"base"}));
+
+let LANG="en";
+const L=(en,es)=>LANG==="es"?es:en;
+const DICT={"Model v7 · amounts in US$": "Modelo v7 · montos en US$", "Auto": "Auto", "Light": "Claro", "Dark": "Oscuro", "Projected wealth in": "Patrimonio proyectado en", "years · target portfolio, base case": "años · cartera objetivo, caso base", "vs keeping the current portfolio": "vs mantener la cartera actual", "Expected return": "Retorno esperado", "Volatility": "Volatilidad", "Overview": "Resumen", "Efficient frontier": "Frontera eficiente", "Allocation": "Asignación", "Transition plan": "Plan de transición", "Risk": "Riesgo", "Validation": "Validación", "Layer 1": "Capa 1", "Client profile": "Perfil del cliente", "Client": "Cliente", "Anonymised description used in the mandate and the report.": "Descripción anonimizada que se usa en el mandato y en el reporte.", "Investment objective": "Objetivo de inversión", "Long-term growth": "Crecimiento de largo plazo", "Balanced growth": "Crecimiento balanceado", "Income": "Ingresos", "Capital preservation": "Preservación de capital", "Risk profile": "Perfil de riesgo", "Conservative · 6% volatility": "Conservador · 6% de volatilidad", "Moderate · 9% volatility": "Moderado · 9% de volatilidad", "Medium-high · 12% volatility": "Medio-alto · 12% de volatilidad", "High · 14% volatility": "Alto · 14% de volatilidad", "1-year VaR limit (99%, model)": "Límite de VaR a 1 año (99%, modelo)", "Saves in": "Ahorra en", "Rate per US$": "Tipo de cambio por US$", "Other mandate rules": "Otras reglas del mandato", "Layer 2": "Capa 2", "Cash flows and horizon": "Flujos y horizonte", "Initial capital": "Capital inicial", "Liquid savings to invest. Illustrative amount; the report never shows real balances.": "Ahorro líquido a invertir. Monto ilustrativo; el reporte nunca muestra saldos reales.", "Monthly contribution": "Aporte mensual", "Liquidity months": "Meses de liquidez", "mo": "meses", "Horizon": "Horizonte", "yrs": "años", "Liquidity need": "Necesidad de liquidez", "Layer 3": "Capa 3", "Implementation": "Implementación", "Target portfolio": "Cartera objetivo", "From profile": "Según perfil", "Custom": "Personalizada", "From profile = Solver frontier portfolio for the risk profile, stepped down if it breaks the VaR limit. Custom = edit weights in Allocation or pick a frontier point.": "Según perfil = cartera de la frontera (Solver) para el perfil de riesgo, que baja por la frontera si supera el límite de VaR. Personalizada = editar pesos en Asignación o elegir un punto de la frontera.", "Sell legacy at start": "Vender cartera antigua al inicio", "Risk-free rate": "Tasa libre de riesgo", "Sell legacy: share of current holdings moved to the target on day one. 0% means new money does all the work, with no sales and no tax event. The risk-free rate is used for the Sharpe ratio.": "Vender cartera antigua: porcentaje de las posiciones actuales que pasa al objetivo el primer día. 0% significa que el dinero nuevo hace todo el trabajo, sin ventas ni impuestos. La tasa libre de riesgo se usa para el Sharpe.", "Current portfolio": "Cartera actual", "Edit the client's current weights in the Allocation tab. Default: 55% EM stocks (proxy for Chilean shares) and 45% bonds.": "Edita los pesos actuales del cliente en la pestaña Asignación. Por defecto: 55% acciones EM (proxy de acciones chilenas) y 45% bonos.", "Reset to model defaults": "Volver a los valores del modelo", "Client mandate": "Mandato del cliente", "Investment Policy Statement in one paragraph": "Investment Policy Statement en un párrafo", "Return gain": "Mejora de retorno", "target vs current, per year": "objetivo vs actual, por año", "Extra risk": "Riesgo adicional", "annual volatility": "volatilidad anual", "Total invested": "Total invertido", "1-year VaR 99%": "VaR 99% a 1 año", "target, on initial capital": "objetivo, sobre el capital inicial", "Wealth projection": "Proyección de patrimonio", "Base case at expected returns, monthly compounding, contributions at month end. Same formula as the Excel dashboard.": "Caso base con retornos esperados, capitalización mensual y aportes a fin de mes. Misma fórmula del dashboard del Excel.", "The expected (average) return is compounded as if earned every year. The typical (median) path grows about σ²/2 a year slower (≈ 0.7 pp at 12% volatility), so treat the base case as an average, not a promise.": "El retorno esperado (promedio) se capitaliza como si se ganara todos los años. El camino típico (mediana) crece cerca de σ²/2 menos al año (≈ 0.7 pp con 12% de volatilidad), así que el caso base es un promedio, no una promesa.", "Bear, base and bull scenarios": "Escenarios pesimista, base y optimista", "The template assumes a 5th or 95th percentile year repeats every year, so its bear and bull cases are extreme bounds. The standard cone lets good and bad years offset (risk grows with √t), so it gives the realistic 90% range for the horizon.": "La plantilla supone que un año del percentil 5 o 95 se repite todos los años, así que sus casos pesimista y optimista son cotas extremas. El cono estándar deja que los años buenos y malos se compensen (el riesgo crece con √t), así que entrega el rango realista de 90% para el horizonte.", "Year by year": "Año a año", "The transition path is the real portfolio while new money moves it toward the target.": "La ruta de transición es la cartera real mientras el dinero nuevo la lleva hacia el objetivo.", "Highest expected return for each level of risk, under the IPS constraints (Solver runs from the Excel model).": "Máximo retorno esperado para cada nivel de riesgo, con las restricciones del IPS (corridas de Solver del Excel).", "Frontier portfolios": "Carteras de la frontera", "Pick a point to load it as the target. VaR is parametric, 1 year, 99%, on the initial capital.": "Elige un punto para cargarlo como objetivo. El VaR es paramétrico, a 1 año, 99%, sobre el capital inicial.", "Robustness checks": "Pruebas de robustez", "Solver re-run under alternative constraints, risk targets and assumptions (static values from Excel model v7, EF Output rows 22 to 32).": "Solver corrido de nuevo con restricciones, niveles de riesgo y supuestos alternativos (valores fijos del Excel v7, EF Output filas 22 a 32).", "The gain over the current mix does not depend on gold or on any single constraint. The 10% international minimum costs 0.15 pp of return and is the only non-US equity; EM and small caps stay at 0%.": "La mejora sobre la cartera actual no depende del oro ni de una restricción puntual. El mínimo de 10% internacional cuesta 0.15 pp de retorno y es la única renta variable fuera de EE.UU.; EM y small caps quedan en 0%.", "Current vs target weights": "Pesos actuales vs objetivo", "Each portfolio must add to 100%. Assumptions are the forward-looking set in the Excel model.": "Cada cartera debe sumar 100%. Los supuestos son los prospectivos del Excel.", "IPS constraint check": "Chequeo de restricciones del IPS", "Target portfolio against the limits in the Investment Policy Statement.": "Cartera objetivo contra los límites del Investment Policy Statement.", "Risk and return map": "Mapa de riesgo y retorno", "Each asset class, the current mix and the target.": "Cada clase de activo, la cartera actual y el objetivo.", "Assumptions": "Supuestos", "Course assumptions. Returns: 50% 30-year history and 50% J.P. Morgan 30-year outlook. Risk: median of rolling 5-year volatility over 30 years. Correlations: a blend that keeps bonds negatively correlated with stocks.": "Supuestos del curso. Retornos: 50% historia a 30 años y 50% outlook a 30 años de J.P. Morgan. Riesgo: mediana de la volatilidad móvil a 5 años en 30 años. Correlaciones: una mezcla que mantiene la correlación negativa entre bonos y acciones.", "First month of investing": "Primer mes de inversión", "How to split the contribution so the portfolio moves toward the target without selling.": "Cómo repartir el aporte para acercar la cartera al objetivo sin vender.", "Allocation over time": "Asignación en el tiempo", "Share of the portfolio by asset class at each year end (transition path).": "Peso de cada clase de activo al cierre de cada año (ruta de transición).", "Monthly buy schedule": "Calendario de compras mensuales", "First 12 months of investing. Gap = share of the portfolio that still differs from the target.": "Primeros 12 meses de inversión. Brecha = parte de la cartera que todavía difiere del objetivo.", "Suitability check": "Chequeo de idoneidad", "The risk profile picks a frontier point; the 1-year VaR limit caps it. The stricter of the two wins.": "El perfil de riesgo elige un punto de la frontera y el límite de VaR a 1 año lo acota. Manda el más estricto de los dos.", "Risk in US dollars": "Riesgo en dólares", "Parametric, normal returns, 1-year horizon, 99% confidence, forward-looking assumptions. VaR = μ − 2.33σ; ES = μ − 2.6685σ.": "Paramétrico, retornos normales, horizonte de 1 año, 99% de confianza, supuestos prospectivos. VaR = μ − 2.33σ; ES = μ − 2.6685σ.", "Historical risk": "Riesgo histórico", "Current and target portfolios rebuilt on 361 months of asset returns (Apr 1996 to Apr 2026), rebalanced monthly. Same data and method as the Excel Historical VaR tab.": "Carteras actual y objetivo reconstruidas con 361 meses de retornos (abr-1996 a abr-2026), con rebalanceo mensual. Mismos datos y método que la hoja Historical VaR del Excel.", "Monthly and annual figures are different horizons and are never compared directly. Historical VaR is the 1st percentile of monthly returns; historical ES is the average of the worst 1% of months (4 of 361).": "Las cifras mensuales y anuales son horizontes distintos y nunca se comparan directamente. El VaR histórico es el percentil 1 de los retornos mensuales; el ES histórico es el promedio del peor 1% de los meses (4 de 361).", "Historical stress test": "Stress test histórico", "Monthly returns compounded over each episode, monthly rebalancing. Loss shown on the initial capital.": "Retornos mensuales compuestos en cada episodio, con rebalanceo mensual. Pérdida sobre el capital inicial.", "Validation against Excel model v7": "Validación contra el Excel v7", "Recomputed with the model default inputs (medium-high profile, 20% VaR limit), whatever is entered on the left.": "Recalculado con los inputs por defecto del modelo (perfil medio-alto, límite de VaR de 20%), sin importar lo que se ingrese a la izquierda.", "Method.": "Método.", "Portfolio return = Σ wᵢμᵢ. Volatility = √(wᵀΣw), with Σ built from the asset volatilities and the correlation matrix. Sharpe = (return − risk-free) / volatility. The projection uses the same closed form as the Client Outcome dashboard. The transition path simulates each asset class month by month and sends each contribution to the classes furthest below target.": "Retorno de la cartera = Σ wᵢμᵢ. Volatilidad = √(wᵀΣw), con Σ armada con las volatilidades y la matriz de correlaciones. Sharpe = (retorno − tasa libre de riesgo) / volatilidad. La proyección usa la misma fórmula cerrada del dashboard Client Outcome. La ruta de transición simula cada clase de activo mes a mes y manda cada aporte a las clases más alejadas del objetivo.", "Built with Claude (Anthropic). Figures validated against Excel model v7. Amounts in US$.": "Hecho con Claude (Anthropic). Cifras validadas contra el Excel v7. Montos en US$.", "Year": "Año", "Invested": "Invertido", "Current mix": "Cartera actual", "Target mix": "Cartera objetivo", "Transition path": "Ruta de transición", "Target − current": "Objetivo − actual", "Scenario": "Escenario", "Template: current": "Plantilla: actual", "Template: target": "Plantilla: objetivo", "Cone: current": "Cono: actual", "Cone: target": "Cono: objetivo", "Bear (5th percentile)": "Pesimista (percentil 5)", "Base (expected return)": "Base (retorno esperado)", "Bull (95th percentile)": "Optimista (percentil 95)", "Asset class": "Clase de activo", "Current %": "Actual %", "Target %": "Objetivo %", "Change": "Cambio", "Exp. return": "Ret. esperado", "Portfolio": "Cartera", "Asset": "Activo", "Return": "Retorno", "Return/vol": "Retorno/vol", "Current": "Actual", "Target": "Objetivo", "Holding before": "Posición previa", "Buy": "Compra", "Weight after": "Peso después", "Month": "Mes", "Gap": "Brecha", "No contributions inside the horizon.": "No hay aportes dentro del horizonte.", "Metric": "Métrica", "Current US$": "Actual US$", "Target US$": "Objetivo US$", "VaR 99%, 1 year": "VaR 99%, 1 año", "Expected Shortfall 99%, 1 year": "Expected Shortfall 99%, 1 año", "Probability of a negative year": "Probabilidad de un año negativo", "Metric (30 years of monthly data)": "Métrica (30 años de datos mensuales)", "Annual return (geometric)": "Retorno anual (geométrico)", "Annual volatility": "Volatilidad anual", "Parametric VaR 99%, annual (μ − 2.33σ)": "VaR paramétrico 99%, anual (μ − 2.33σ)", "Parametric ES 99%, annual (μ − 2.6685σ)": "ES paramétrico 99%, anual (μ − 2.6685σ)", "Historical VaR 99%, monthly": "VaR histórico 99%, mensual", "Historical ES 99%, monthly": "ES histórico 99%, mensual", "Episode": "Episodio", "Global Financial Crisis (Nov-07 to Feb-09)": "Crisis financiera global (nov-07 a feb-09)", "Calendar year 2008": "Año calendario 2008", "COVID (Feb to Mar 2020)": "COVID (feb a mar 2020)", "Calendar year 2022": "Año calendario 2022", "Worst month (30 years)": "Peor mes (30 años)", "VaR 99% 1y": "VaR 99% 1 año", "Use as target": "Usar como objetivo", "Profile": "Perfil", "LC Growth / LC Value / Intl / Gold / Bonds / HY (%)": "LC Growth / LC Value / Intl / Oro / Bonos / HY (%)", "Base case (min 10% Intl)": "Caso base (mín. 10% intl)", "No Intl minimum": "Sin mínimo intl", "Gold max 5%": "Oro máx. 5%", "Gold 0%": "Oro 0%", "Min 10% Bonds": "Mín. 10% bonos", "Risk = current portfolio": "Riesgo = cartera actual", "Risk target 9%": "Riesgo objetivo 9%", "Risk target 14%": "Riesgo objetivo 14%", "Risk target 17% (frontier ends)": "Riesgo objetivo 17% (fin de la frontera)", "30-year historical assumptions": "Supuestos históricos a 30 años", "Base weights on 30-year data": "Pesos base con datos de 30 años", "Planner": "Herramienta", "Difference": "Diferencia", "Status": "Estado", "✓ Match": "✓ Cuadra", "✕ Check": "✕ Revisar", "expected return": "retorno esperado", "volatility": "volatilidad", "parametric VaR 99%, annual": "VaR paramétrico 99%, anual", "parametric ES 99%, annual": "ES paramétrico 99%, anual", "VaR on 30Y history": "VaR con historia de 30 años", "ES on 30Y history": "ES con historia de 30 años", "historical return 30Y": "retorno histórico 30 años", "historical volatility 30Y": "volatilidad histórica 30 años", "historical VaR 99% monthly": "VaR histórico 99% mensual", "historical ES 99% monthly": "ES histórico 99% mensual", "Wealth in 10 years, current": "Patrimonio a 10 años, actual", "Wealth in 10 years, recommended": "Patrimonio a 10 años, recomendada", "Total invested, 10 years": "Total invertido, 10 años", "Base case 10Y (capital only), recommended": "Caso base 10 años (solo capital), recomendada", "Bear case 10Y, current": "Caso pesimista 10 años, actual", "Bear case 10Y, recommended": "Caso pesimista 10 años, recomendada", "Bull case 10Y, current": "Caso optimista 10 años, actual", "Bull case 10Y, recommended": "Caso optimista 10 años, recomendada", "Frontier at 12% risk: return": "Frontera al 12% de riesgo: retorno", "Current ◆": "Actual ◆", "Asset classes": "Clases de activo", "Transition path (contributions only)": "Ruta de transición (solo aportes)", "within limit": "dentro del límite", "above limit": "sobre el límite", "Use recommended portfolio": "Usar cartera recomendada", "Objective": "Objetivo", "VaR limit": "Límite de VaR", "Liquidity": "Liquidez", "Currency": "Moneda", "Rebalancing": "Rebalanceo", "IPS limits": "Límites IPS", "Intl Developed": "Intl desarrollados", "EM Stocks": "Acciones EM", "Gold": "Oro", "Bonds": "Bonos", "Bear": "Pesimista", "Base": "Base", "Bull": "Optimista", "All": "Todos", "Retirement goal": "Meta de retiro", "Retirement income goal": "Meta de renta para el retiro", "How much the client must invest each month to live off the portfolio, with the current mix versus the target. Capital and contributions come from the left panel.": "Cuánto debe invertir el cliente cada mes para vivir de su cartera, con la cartera actual versus la objetivo. El capital y los aportes vienen del panel izquierdo.", "Monthly income wanted (CLP of today)": "Renta mensual deseada (CLP de hoy)", "Years until retirement": "Años hasta el retiro", "Withdrawal rate": "Tasa de retiro", "Confidence": "Seguridad", "50%: typical case": "50%: caso típico", "75%: 3 in 4 futures": "75%: 3 de cada 4 futuros", "90%: 9 in 10 futures": "90%: 9 de cada 10 futuros", "US inflation": "Inflación en EE.UU.", "Move to the 9% frontier portfolio in the last 10 years": "Bajar a la cartera de 9% de la frontera en los últimos 10 años", "Capital needed = yearly income ÷ withdrawal rate (4% is the classic rule from US data; 3.5% is safer for a long retirement). Everything is in today's money: contributions rise with inflation (for example, indexed to the UF).": "Capital necesario = renta anual ÷ tasa de retiro (4% es la regla clásica con datos de EE.UU.; 3,5% es más prudente para un retiro largo). Todo está en dinero de hoy: los aportes suben con la inflación (por ejemplo, indexados a la UF).", "Monthly investment needed: current vs target": "Inversión mensual necesaria: actual vs objetivo", "Wealth with the current contribution": "Patrimonio con el aporte actual", "Typical case (median) and bad case (1 in 10) of 5,000 simulated futures, in today's money.": "Caso típico (mediana) y caso malo (1 de cada 10) de 5,000 futuros simulados, en dinero de hoy.", "Taxes in Chile": "Impuestos en Chile", "No taxes": "Sin impuestos", "APV (Régimen A): taxes deferred": "APV (Régimen A): impuestos diferidos", "Art. 107: 10% single tax on gains": "Art. 107: impuesto único de 10% a la ganancia", "Global Complementario at your bracket": "Global Complementario según tu tramo", "Your Global Complementario bracket": "Tu tramo de Global Complementario", "Chile taxes as a yearly drag on returns: none, APV Régimen A, Art. 107 (10%) or Global Complementario at the chosen bracket.": "Impuestos de Chile como arrastre anual sobre el retorno: sin impuestos, APV Régimen A, Art. 107 (10%) o Global Complementario según el tramo elegido.", "The same tax treatment for the current and the target portfolio, so the comparison stays fair.": "El mismo tratamiento tributario para la cartera actual y la objetivo, para que la comparación sea justa.", "Taxes in retirement: they lower the withdrawal the capital can sustain, so the capital needed rises.": "Impuestos en el retiro: bajan el retiro que el capital puede sostener, así que sube el capital necesario.", "Inflation: all figures are in today's money and contributions rise with inflation.": "Inflación: todas las cifras están en dinero de hoy y los aportes suben con la inflación.", "Uncertainty: 5,000 simulated futures; the required saving is shown at 50%, 75% and 90% confidence.": "Incertidumbre: 5,000 futuros simulados; el ahorro necesario se muestra con 50%, 75% y 90% de seguridad.", "Taxes in the other tabs: Overview, Efficient frontier, Allocation, Transition plan and Risk are pre-tax, like the Excel model they are validated against.": "Impuestos en las demás pestañas: Resumen, Frontera eficiente, Asignación, Plan de transición y Riesgo son antes de impuestos, igual que el Excel contra el que se validan.", "The APV state bonus (15%) and the yearly APV limits.": "La bonificación del 15% del APV y sus topes anuales.", "The Art. 57 exemption for mutual fund redemptions (up to 30 UTM a year).": "La exención del art. 57 para rescates de fondos mutuos (hasta 30 UTM al año).", "Tax on currency gains from investing in US dollars, and USD/CLP exchange-rate risk.": "El impuesto por ganancias cambiarias al invertir en dólares, y el riesgo cambiario USD/CLP.", "Fund and broker fees, which lower returns in the same way as taxes.": "Comisiones de fondos y corredoras, que restan retorno igual que los impuestos.", "Taxes of another country of residence (for example Spain).": "Impuestos de otro país de residencia (por ejemplo, España).", "A rule to live only off returns: set the withdrawal rate to about 4.2% (half the futures keep the capital intact) or 3% (about three in four).": "Una regla para vivir solo de las rentas: usa una tasa de retiro de cerca de 4,2% (la mitad de los futuros mantiene el capital intacto) o 3% (cerca de tres de cada cuatro).", "What this tab includes": "Qué incluye esta pestaña", "This tab goes beyond the Excel model of the course. Read these limits before using its figures.": "Esta pestaña va más allá del modelo Excel del curso. Lee estos límites antes de usar sus cifras.", "Included in this tab": "Incluido en esta pestaña", "Not included": "No incluido", "Not tax or financial advice. Tax rules change and depend on residence; check with a tax adviser before acting.": "No es asesoría tributaria ni financiera. Las reglas tributarias cambian y dependen de la residencia; revísalo con un asesor tributario antes de actuar.", "Scope.": "Alcance.", "Academic exercise for IE IMBA Asset Management. Not financial advice. Figures are pre-tax and exclude fees and USD/CLP currency risk, except the optional Chile tax setting in the Retirement goal tab.": "Ejercicio académico para IE IMBA Asset Management. No es asesoría financiera. Las cifras son antes de impuestos y excluyen comisiones y riesgo cambiario USD/CLP, salvo la opción de impuestos de Chile en la pestaña Meta de retiro.", "These checks cover the pre-tax model replicated from the Excel, including the v7 additions (probability cone, unconstrained frontier and monthly tail). The parametric monthly VaR is checked to 0.05 pp because the Excel reports it rounded. The Retirement goal tab adds taxes, inflation and simulations that are not in the Excel model, so it is checked separately (against an independent Python simulation), not here.": "Estos chequeos cubren el modelo antes de impuestos replicado del Excel, incluidas las novedades del v7 (cono de probabilidad, frontera sin restricciones y cola mensual). El VaR paramétrico mensual se verifica a 0,05 pp porque el Excel lo informa redondeado. La pestaña Meta de retiro agrega impuestos, inflación y simulaciones que no están en el Excel, así que se verifica por separado (contra una simulación independiente en Python), no aquí.", "Monthly tail: normal model vs history": "Cola mensual: modelo normal vs historia", "Same 361 months, same method as the histogram in the Excel Historical VaR tab.": "Los mismos 361 meses, mismo método que el histograma de la hoja Historical VaR del Excel.", "Cone 10Y bear, current": "Cono 10 años pesimista, actual", "Cone 10Y base, current": "Cono 10 años base, actual", "Cone 10Y bull, current": "Cono 10 años optimista, actual", "Cone 10Y bear, recommended": "Cono 10 años pesimista, recomendada", "Cone 10Y base, recommended": "Cono 10 años base, recomendada", "Cone 10Y bull, recommended": "Cono 10 años optimista, recomendada", "Unconstrained frontier 12%: return from Excel weights": "Frontera sin restricciones 12%: retorno con los pesos del Excel", "parametric VaR 99% monthly": "VaR paramétrico 99% mensual", "months worse than parametric VaR": "meses peores que el VaR paramétrico"};
+const AN_ES={"Intl Developed":"Intl desarrollados","EM Stocks":"Acciones EM","Gold":"Oro","Bonds":"Bonos"};
+const AN=i=>LANG==="es"?(AN_ES[A.name[i]]||A.name[i]):A.name[i];
+const numES=t=>t.replace(/(\d),(?=\d{3}(\D|$))/g,"$1\u0001").replace(/(\d)\.(\d)/g,"$1,$2").replace(/\u0001/g,".");
+const NL=t=>LANG==="es"?numES(t):t;
+const ORIG=new WeakMap();
+function translateDOM(){
+  const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:n=>{const p=n.parentNode&&n.parentNode.nodeName;return (p==="SCRIPT"||p==="STYLE")?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT;}});
+  let n; while((n=w.nextNode())){
+    if(!ORIG.has(n)) ORIG.set(n,n.nodeValue);
+    const o=ORIG.get(n); let t=o;
+    if(LANG==="es"){ const k=o.trim();
+      if(k){ let tr=DICT[k];
+        if(tr===undefined){ const m=k.match(/^(Current|Recommended): (.+)$/); if(m) tr=(m[1]==="Current"?"Actual: ":"Recomendada: ")+(DICT[m[2]]||m[2]); }
+        if(tr!==undefined) t=o.replace(k,tr);
+        t=numES(t); } }
+    if(n.nodeValue!==t) n.nodeValue=t;
+  }
+}
+const PDEF_ES={name:"profesional de 32 años",note:"Prepagar el crédito hipotecario solo si el retorno real esperado de la cartera (después de impuestos y efectos cambiarios) cae bajo la tasa real del crédito de ~4%",liq:"compra de auto dentro de 12 meses"};
+const OBJ_ES={growth:["Crecimiento de largo plazo","Maximizar el patrimonio en el horizonte; acepta vaivenes del mercado a cambio de más retorno."],balanced:["Crecimiento balanceado","Hacer crecer el patrimonio manteniendo una parte relevante en bonos para suavizar caídas."],income:["Ingresos","Importa más un flujo estable que el crecimiento; prefiere bonos y high yield."],preserve:["Preservación de capital","Primero proteger el monto inicial; el crecimiento es secundario."]};
+const RISK_ES={0:["Conservador","6%","Vaivenes pequeños. Cerca de 1 año negativo de cada 6 según el modelo."],3:["Moderado","9%","Vaivenes moderados. Un año tipo 2008 todavía puede costar cerca de un cuarto de la cartera."],6:["Medio-alto","12%","Acepta caídas de tipo bursátil en crisis (pérdidas tipo GFC de 40% o más) a cambio de más retorno de largo plazo."],8:["Alto","14%","Cercana a una cartera 100% acciones; las caídas más profundas en crisis."]};
+const OBJT=()=>LANG==="es"?OBJ_ES:OBJ, RISKT=()=>LANG==="es"?RISK_ES:RISK;
+function setLang(lg){
+  const prev=LANG; LANG=lg==="es"?"es":"en";
+  document.documentElement.lang=LANG;
+  document.querySelectorAll("#langSw button").forEach(b=>b.classList.toggle("on",b.dataset.lg===LANG));
+  // swap untouched default texts
+  const from=prev==="es"?PDEF_ES:PDEF, to=LANG==="es"?PDEF_ES:PDEF;
+  ["name","note","liq"].forEach(k=>{ if(S.prof[k]===from[k]){ S.prof[k]=to[k]; const id={name:"pName",note:"pNote",liq:"pLiq"}[k]; $(id).value=to[k]; } });
+  try{localStorage.setItem("pp-lang",LANG)}catch(e){}
+  render();
+}
+
+const $ = id => document.getElementById(id);
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const col = i => css("--c-"+A.key[i]);
+const pct = (x,d=2) => (x*100).toFixed(d).replace("-","−")+"%";
+const pp = x => (x>=0?"+":"−")+Math.abs(x*100).toFixed(2)+" pp";
+const eur = x => (x<=-0.5?"−US$":"US$")+Math.round(Math.abs(x)).toLocaleString("en-US");
+const eurS = x => (x>=0?"+US$":"−US$")+Math.round(Math.abs(x)).toLocaleString("en-US");
+
+function stats(wPct, rf){
+  const w = wPct.map(x=>x/100);
+  let r=0,v=0;
+  for(let i=0;i<N;i++){ r+=w[i]*A.mu[i]; for(let j=0;j<N;j++) v+=w[i]*w[j]*A.sd[i]*A.sd[j]*A.corr[i][j]; }
+  const vol=Math.sqrt(Math.max(v,0));
+  return {r, vol, sh: vol>0?(r-rf)/vol:0};
+}
+// Same closed form as Excel Client Outcome dashboard
+function fv(cap,con,r,car,m){
+  const g=Math.pow(1+r,1/12);
+  const n=Math.max(0,m-car);
+  return cap*Math.pow(1+r,m/12) + (n>0? con*(Math.pow(g,n)-1)/(g-1) : 0);
+}
+// Transition path: grow each class at its own expected return; contributions fill gaps to target
+function transition(s){
+  const t=s.tgt.map(x=>x/100), c=s.cur.map(x=>x/100);
+  let h=c.map(x=>x*s.cap);
+  const sellShare=Math.min(Math.max(s.sell,0),100)/100;
+  if(sellShare>0){ const moved=h.reduce((a,b)=>a+b,0)*sellShare; h=h.map((x,i)=>x*(1-sellShare)+moved*t[i]); }
+  const g=A.mu.map(m=>Math.pow(1+m,1/12));
+  const months=s.yrs*12, path=[], buys=[];
+  path.push({m:0,h:h.slice()});
+  for(let m=1;m<=months;m++){
+    h=h.map((x,i)=>x*g[i]);
+    let buy=new Array(N).fill(0);
+    if(m>s.car && s.con>0){
+      const T=h.reduce((a,b)=>a+b,0)+s.con;
+      const def=h.map((x,i)=>Math.max(0,t[i]*T-x));
+      const D=def.reduce((a,b)=>a+b,0);
+      if(D>=s.con) buy=def.map(d=>s.con*d/D);
+      else buy=def.map((d,i)=>d+(s.con-D)*t[i]);
+      h=h.map((x,i)=>x+buy[i]);
+      buys.push({m,buy,h:h.slice()});
+    }
+    path.push({m,h:h.slice()});
+  }
+  return {path,buys};
+}
+const total = h => h.reduce((a,b)=>a+b,0);
+// Historical risk on monthly data, same method as Excel Historical VaR tab
+function hist(wPct){
+  const w=wPct.map(x=>x/100), p=HD.r.map(row=>row.reduce((a,x,i)=>a+x*w[i],0)), n=p.length;
+  let idx=1, first=null; const cum=[]; p.forEach((x,k)=>{idx*=1+x; cum.push(idx);});
+  const g=Math.pow(cum[n-1]/cum[0],12/360)-1;
+  const mean=p.reduce((a,b)=>a+b,0)/n, sd=Math.sqrt(p.reduce((a,b)=>a+(b-mean)**2,0)/n)*Math.sqrt(12);
+  const srt=p.slice().sort((a,b)=>a-b), pos=(n-1)*0.01, lo=Math.floor(pos), hvar=srt[lo]+(srt[lo+1]-srt[lo])*(pos-lo);
+  const k=Math.ceil(n*0.01), hes=srt.slice(0,k).reduce((a,b)=>a+b,0)/k;
+  const seg=(a,b)=>{const i=HD.d.indexOf(a), j=HD.d.indexOf(b); let v=1; for(let t=i;t<=j;t++) v*=1+p[t]; return v-1;};
+  const sdm=Math.sqrt(p.reduce((a,b)=>a+(b-mean)**2,0)/n), pvm=mean-2.33*sdm, below=p.filter(x=>x<pvm).length, wsd=(mean-srt[0])/sdm;
+  return {mean,sdm,pvm,below,wsd,g,sd,hvar,hes,stress:[seg("2007-11","2009-02"),seg("2008-01","2008-12"),seg("2020-02","2020-03"),seg("2022-01","2022-12"),srt[0]]};
+}
+const STRESSN=["Global Financial Crisis (Nov-07 to Feb-09)","Calendar year 2008","COVID (Feb to Mar 2020)","Calendar year 2022","Worst month (30 years)"];
+const ZES=2.66851296240054;
+// Profile -> frontier point, capped by the loss limit
+function profilePick(){
+  const want=+S.prof.risk, L=Math.max(0,isNaN(+S.prof.loss)?20:+S.prof.loss)/100;
+  const pts=FRONT.slice(0,9).map(f=>stats(f[2].map(x=>x*100),S.rf/100));
+  let lossIdx=-1; pts.forEach((p,k)=>{if(-(p.r-2.33*p.vol)<=L) lossIdx=k;});
+  const idx=lossIdx<0?0:Math.min(want,lossIdx);
+  return {idx,want,lossIdx,capped:idx<want,none:lossIdx<0};
+}
+const gap = (h,tgt) => { const T=total(h); return 0.5*h.reduce((a,x,i)=>a+Math.abs(x/T-tgt[i]/100),0); };
+
+/* ---------- rendering ---------- */
+let charts={};
+function mk(key,id,cfg){
+  try{ if(charts[key]) charts[key].destroy(); }catch(e){}
+  charts[key]=null;
+  const cv=$(id), box=cv&&cv.parentElement; if(!cv) return;
+  try{
+    if(!window.Chart) throw new Error("no chart library");
+    charts[key]=new Chart(cv,cfg); cv.hidden=false; const m=box.querySelector(".chartmsg"); if(m) m.remove();
+  }catch(e){
+    cv.hidden=true; if(!box.querySelector(".chartmsg")){const m=document.createElement("div");m.className="chartmsg";m.textContent=L("Chart unavailable (chart library did not load). The tables on this tab show the same figures.","Gráfico no disponible (no cargó la librería de gráficos). Las tablas de esta pestaña muestran las mismas cifras.");box.appendChild(m);}
+  }
+}
+function legend(el, items, sq){ $(el).innerHTML = items.map(([n,c,dash])=>`<span><i class="${sq?'sq':''}" style="background:${c};${dash?'background:repeating-linear-gradient(90deg,'+c+' 0 4px,transparent 4px 7px)':''}"></i>${n}</span>`).join(""); }
+
+function render(){
+  const pk=profilePick(); if(S.preset==="rec") S.tgt=FRONT[pk.idx][2].map(x=>x*100);
+  const rf=S.rf/100, cs=stats(S.cur,rf), ts=stats(S.tgt,rf);
+  const months=S.yrs*12;
+  const wCur=fv(S.cap,S.con,cs.r,S.car,months), wTgt=fv(S.cap,S.con,ts.r,S.car,months);
+  const tr=transition(S); const wTr=total(tr.path[months].h);
+  const inv=S.cap+S.con*Math.max(0,months-S.car);
+
+  $("hSub").textContent=L(`Client: ${S.prof.name} · ${OBJT()[S.prof.obj][0]} · ${S.yrs}-year horizon · target volatility ${pct(ts.vol,1)}`,`Cliente: ${S.prof.name} · ${OBJT()[S.prof.obj][0]} · horizonte de ${S.yrs} años · volatilidad objetivo ${pct(ts.vol,1)}`);
+  $("hYears").textContent=S.yrs; $("hWealth").textContent=eur(wTgt); $("hDelta").textContent=eurS(wTgt-wCur);
+  $("hRet").textContent=pct(ts.r); $("hRetS").textContent=L("current ","actual ")+pct(cs.r);
+  $("hVol").textContent=pct(ts.vol); $("hVolS").textContent=L("current ","actual ")+pct(cs.vol);
+  $("hSh").textContent=ts.sh.toFixed(2); $("hShS").textContent=L("current ","actual ")+cs.sh.toFixed(2);
+
+  $("kRet").textContent=pp(ts.r-cs.r); $("kRet").className="v "+(ts.r>=cs.r?"up":"down");
+  $("kVol").textContent=pp(ts.vol-cs.vol);
+  $("kInv").textContent=eur(inv); $("kInvS").textContent=L(`capital + ${Math.max(0,months-S.car)} contributions`,`capital + ${Math.max(0,months-S.car)} aportes`);
+  $("kVaR").textContent=eur(Math.min(0,ts.r-2.33*ts.vol)*S.cap);
+
+  // year table
+  let rows=`<thead><tr><th>Year</th><th>Invested</th><th>Current mix</th><th>Target mix</th><th>Transition path</th><th>Target − current</th></tr></thead><tbody>`;
+  for(let y=0;y<=S.yrs;y++){
+    const m=y*12, a=fv(S.cap,S.con,cs.r,S.car,m), b=fv(S.cap,S.con,ts.r,S.car,m), p=total(tr.path[m].h);
+    rows+=`<tr><td>${y}</td><td>${eur(S.cap+S.con*Math.max(0,m-S.car))}</td><td>${eur(a)}</td><td>${eur(b)}</td><td>${eur(p)}</td><td class="${b>=a?'up':'down'}">${eurS(b-a)}</td></tr>`;
+  }
+  $("tYears").innerHTML=rows+"</tbody>";
+
+  renderWealth(cs,ts,tr);
+  renderAlloc(cs,ts);
+  renderPlan(tr);
+  renderRisk(cs,ts);
+  renderValid();
+  renderFront(cs,ts);
+  renderScen(cs,ts);
+  renderLoss(ts);
+  renderMandate(cs,ts,pk);
+  renderExplain(pk);
+  renderGoal(cs,ts);
+  translateDOM();
+}
+
+function baseOpts(){
+  const fg2=css("--fg-2"), line=css("--line"), fg3=css("--fg-3");
+  return {responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:"index",intersect:false},
+    plugins:{legend:{display:false},tooltip:{backgroundColor:css("--surface"),titleColor:css("--fg"),bodyColor:fg2,borderColor:line,borderWidth:1,padding:10,titleFont:{family:"IBM Plex Sans",weight:"600"},bodyFont:{family:"IBM Plex Mono"}}},
+    scales:{x:{grid:{display:false},border:{color:line},ticks:{color:fg3,font:{family:"IBM Plex Sans",size:11}}},
+            y:{grid:{color:line},border:{display:false},ticks:{color:fg3,font:{family:"IBM Plex Mono",size:11}}}}};
+}
+
+// Scenario bands: 5,000 simulated paths (lognormal monthly returns, arithmetic mean = expected return), same seed every time
+function rng32(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const SIMC={};
+function simPaths(st,q){
+  const key=[st.r,st.vol,S.cap,S.con,S.car,S.yrs].join("|")+q; if(SIMC[key]) return SIMC[key];
+  const n=5000, M=S.yrs*12, sm=st.vol/Math.sqrt(12), lm=Math.log(1+st.r)/12-0.5*sm*sm, R=rng32(20261016);
+  const v=new Float64Array(n).fill(S.cap), out=[S.cap], tmp=new Float64Array(n);
+  for(let m=1;m<=M;m++){
+    for(let i=0;i<n;i++){ const u1=Math.max(R(),1e-12), u2=R(); const z=Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2); v[i]*=Math.exp(lm+sm*z); if(m>S.car) v[i]+=S.con; }
+    tmp.set(v); tmp.sort(); out.push(tmp[Math.min(n-1,Math.floor(q*(n-1)))]);
+  }
+  SIMC[key]=out; return out;
+}
+function renderWealth(cs,ts,tr){
+  const labels=[], a=[], b=[], p=[];
+  const all=S.scen==="all", base=S.scen==="base"||all, q=S.scen==="bear"?0.05:0.95;
+  const sa=base?null:simPaths(cs,q), sb=base?null:simPaths(ts,q);
+  for(let m=0;m<=S.yrs*12;m++){ labels.push(m%12===0?L("Y","A")+(m/12):""); a.push(base?fv(S.cap,S.con,cs.r,S.car,m):sa[m]); b.push(base?fv(S.cap,S.con,ts.r,S.car,m):sb[m]); p.push(total(tr.path[m].h)); }
+  const cA=css("--fg-3"), cB=css("--target"), cP=css("--c-lcv");
+  const tag=base?"":L(S.scen==="bear"?", 5th percentile":", 95th percentile",S.scen==="bear"?", percentil 5":", percentil 95");
+  if(all) legend("lgWealth",[[L("Recommended: expected","Recomendada: esperado"),cB],[L("Recommended: 90% of outcomes fall in the band","Recomendada: el 90% de los resultados cae en la banda"),cB+"55"],[L("Current: expected","Actual: esperado"),cA],[L("Current: bad and good case (dashed)","Actual: caso malo y bueno (punteado)"),cA,true]]);
+  else legend("lgWealth",[[L("Target mix (","Cartera objetivo (")+pct(ts.vol,0)+" vol"+tag+")",cB],...(base?[["Transition path (contributions only)",cP,true]]:[]),[L("Current mix","Cartera actual")+(base?"":" ("+tag.slice(2)+")"),cA]]);
+  const M=S.yrs*12, wb=b[M], wa=a[M], sc=S.scen, med=simPaths(ts,0.5)[M];
+  if(all){ const t5=simPaths(ts,0.05)[M], t95=simPaths(ts,0.95)[M], c5=simPaths(cs,0.05)[M], c95=simPaths(cs,0.95)[M];
+    $("wealthNote").innerHTML=L(`<b>All scenarios at year ${S.yrs}:</b> target ${eur(t5)} / ${eur(wb)} / ${eur(t95)} (bear / base / bull), current ${eur(c5)} / ${eur(wa)} / ${eur(c95)}. The target ends above the current mix in all three. The shaded band holds 90% of 5,000 simulated outcomes; it widens with time because uncertainty compounds. Base lines use the Excel formula; bands are simulated percentiles.`,
+      `<b>Todos los escenarios al año ${S.yrs}:</b> objetivo ${eur(t5)} / ${eur(wb)} / ${eur(t95)} (pesimista / base / optimista), actual ${eur(c5)} / ${eur(wa)} / ${eur(c95)}. El objetivo termina sobre la cartera actual en los tres. La banda sombreada contiene el 90% de 5,000 resultados simulados; se ensancha con el tiempo porque la incertidumbre se acumula. Las líneas base usan la fórmula del Excel; las bandas son percentiles simulados.`);
+    if(t5<c5||wb<wa||t95<c95) $("wealthNote").innerHTML=$("wealthNote").innerHTML.replace(L("The target ends above the current mix in all three.","El objetivo termina sobre la cartera actual en los tres."),L("The target does not end above the current mix in every scenario.","El objetivo no termina sobre la cartera actual en todos los escenarios."));
+  } else
+  $("wealthNote").innerHTML = base
+    ? L(`The expected (average) return is compounded as if earned every year, as in the Excel dashboard. The typical (median) outcome is lower: ${eur(med)} for the target in a 5,000-path simulation, because volatility drags compound growth by about σ²/2 a year.`,`El retorno esperado (promedio) se capitaliza como si se ganara todos los años, igual que en el dashboard del Excel. El resultado típico (mediana) es menor: ${eur(med)} para el objetivo en una simulación de 5,000 escenarios, porque la volatilidad reduce el crecimiento compuesto en cerca de σ²/2 al año.`)
+    : L(`<b>${sc==="bear"?"Bear":"Bull"} case:</b> the ${sc==="bear"?"5th":"95th"} percentile of 5,000 simulated paths, month by month, including contributions. Ending wealth: target ${eur(wb)}, current ${eur(wa)} (${eurS(wb-wa)}). One outcome in 20 ends ${sc==="bear"?"below":"above"} this line. Each line is a percentile at each date, not a single path.`,
+          `<b>Caso ${sc==="bear"?"pesimista":"optimista"}:</b> percentil ${sc==="bear"?"5":"95"} de 5,000 trayectorias simuladas, mes a mes, con aportes. Patrimonio final: objetivo ${eur(wb)}, actual ${eur(wa)} (${eurS(wb-wa)}). En 1 de cada 20 casos el resultado queda ${sc==="bear"?"bajo":"sobre"} esta línea. Cada línea es un percentil en cada fecha, no una trayectoria única.`);
+  const o=baseOpts();
+  o.scales.y.ticks.callback=v=>"$"+(v/1000).toFixed(0)+"k";
+  o.scales.x.ticks.autoSkip=false; o.scales.x.ticks.maxRotation=0;
+  o.plugins.tooltip.callbacks={title:i=>{const m=i[0].dataIndex;return NL(L(`Month ${m} (year ${(m/12).toFixed(1)})`,`Mes ${m} (año ${(m/12).toFixed(1)})`))},label:c=>NL(` ${c.dataset.label}: ${eur(c.parsed.y)}`)};
+  let ds;
+  if(all){
+    const t5=simPaths(ts,0.05), t95=simPaths(ts,0.95), c5=simPaths(cs,0.05), c95=simPaths(cs,0.95);
+    ds=[
+      {label:L("Target, 95th percentile","Objetivo, percentil 95"),data:t95,borderColor:cB+"66",backgroundColor:cB+"22",fill:"+1",borderWidth:1,pointRadius:0,tension:.2},
+      {label:L("Target, 5th percentile","Objetivo, percentil 5"),data:t5,borderColor:cB+"66",borderWidth:1,pointRadius:0,tension:.2,fill:false},
+      {label:L("Target, base","Objetivo, base"),data:b,borderColor:cB,borderWidth:2.5,pointRadius:0,tension:.2,fill:false},
+      {label:L("Current, 95th percentile","Actual, percentil 95"),data:c95,borderColor:cA,borderDash:[4,4],borderWidth:1.5,pointRadius:0,tension:.2,fill:false},
+      {label:L("Current, base","Actual, base"),data:a,borderColor:cA,borderWidth:2,pointRadius:0,tension:.2,fill:false},
+      {label:L("Current, 5th percentile","Actual, percentil 5"),data:c5,borderColor:cA,borderDash:[4,4],borderWidth:1.5,pointRadius:0,tension:.2,fill:false}];
+  } else ds=[
+    {label:L("Target mix","Cartera objetivo"),data:b,borderColor:cB,backgroundColor:cB+"22",fill:false,borderWidth:2.5,pointRadius:0,tension:.2},
+    ...(base&&!all?[{label:L("Transition path","Ruta de transición"),data:p,borderColor:cP,borderDash:[5,4],borderWidth:2,pointRadius:0,tension:.2}]:[]),
+    {label:L("Current mix","Cartera actual"),data:a,borderColor:cA,borderWidth:2,pointRadius:0,tension:.2}];
+  if(all){
+    const k=v=>"US$"+Math.round(v/1000)+"k";
+    o.plugins.tooltip.filter=it=>it.datasetIndex===2||it.datasetIndex===4;
+    o.plugins.tooltip.itemSort=(x,y)=>x.datasetIndex-y.datasetIndex;
+    o.plugins.tooltip.callbacks.label=c=>{const d=c.chart.data.datasets, i=c.dataIndex, tg=c.datasetIndex===2;
+      const lo=d[tg?1:5].data[i], mid=d[tg?2:4].data[i], hi=d[tg?0:3].data[i];
+      return NL(` ${tg?L("Recommended","Recomendada"):L("Current","Actual")}: ${k(lo)} ${L("bad","malo")} · ${k(mid)} ${L("expected","esperado")} · ${k(hi)} ${L("good","bueno")}`);};
+  }
+  mk("w","cWealth",{type:"line",data:{labels,datasets:ds},options:o});
+}
+
+function constraints(w){
+  const st=w[0]+w[1]+w[2]+w[3]+w[4]+w[5];
+  const nonUS = st>0 ? (w[4]+w[5])/st*100 : 0;
+  return [
+    [L("Gold ≤ 10%","Oro ≤ 10%"),w[6],w[6]<=10.0001],["High Yield ≤ 20%",w[8],w[8]<=20.0001],["EM ≤ 20%",w[5],w[5]<=20.0001],
+    [L("Non-US ≤ 40% of stocks","No-EE.UU. ≤ 40% de las acciones"),nonUS,nonUS<=40.0001],["SC Growth ≤ 10%",w[2],w[2]<=10.0001],["SC Value ≤ 10%",w[3],w[3]<=10.0001],
+    [L("Intl Developed ≥ 10%","Intl desarrollados ≥ 10%"),w[4],w[4]>=9.9999],[L("Each asset ≤ 50%","Cada activo ≤ 50%"),Math.max(...w),Math.max(...w)<=50.0001],[L("No shorts","Sin posiciones cortas"),Math.min(...w),Math.min(...w)>=0],[L("Weights add to 100%","Pesos suman 100%"),w.reduce((a,b)=>a+b,0),Math.abs(w.reduce((a,b)=>a+b,0)-100)<0.05]];
+}
+
+function renderAlloc(cs,ts){
+  const sc=S.cur.reduce((a,b)=>a+b,0), st=S.tgt.reduce((a,b)=>a+b,0);
+  let r=`<thead><tr><th>Asset class</th><th>Current %</th><th>Target %</th><th>Change</th><th>Exp. return</th><th>Volatility</th></tr></thead><tbody>`;
+  for(let i=0;i<N;i++){
+    const d=S.tgt[i]-S.cur[i];
+    r+=`<tr><td><span class="sw" style="background:${col(i)}"></span>${AN(i)}</td>
+      <td><input class="wt" id="wc${i}" data-k="cur" data-i="${i}" type="number" step="0.1" value="${+S.cur[i].toFixed(2)}" aria-label="Current weight ${A.name[i]}"></td>
+      <td><input class="wt" id="wt${i}" data-k="tgt" data-i="${i}" type="number" step="0.1" value="${+S.tgt[i].toFixed(2)}" aria-label="Target weight ${A.name[i]}"></td>
+      <td class="${d>0?'up':d<0?'down':''}">${d===0?'–':(d>0?'+':'−')+Math.abs(d).toFixed(1)}</td><td>${pct(A.mu[i])}</td><td>${pct(A.sd[i])}</td></tr>`;
+  }
+  r+=`<tr class="total"><td>Portfolio</td><td>${sc.toFixed(1)}%</td><td>${st.toFixed(1)}%</td><td></td><td>${pct(ts.r)}</td><td>${pct(ts.vol)}</td></tr></tbody>`;
+  const tb=$("tAlloc"); const active=document.activeElement&&document.activeElement.id; tb.innerHTML=r;
+  if(active&&$(active)&&active.startsWith("w")){ $(active).focus(); }
+  const ok=(x)=>Math.abs(x-100)<0.05;
+  $("sumChips").innerHTML=`<span class="chip ${ok(sc)?'ok':'no'}">Current <b>${sc.toFixed(1)}%</b></span><span class="chip ${ok(st)?'ok':'no'}">Target <b>${st.toFixed(1)}%</b></span>`;
+  $("consChips").innerHTML=constraints(S.tgt).map(([n,v,p])=>`<span class="chip ${p?'ok':'no'}">${p?'✓':'✕'} ${n} <b>${v.toFixed(1)}%</b></span>`).join("");
+
+  let a=`<thead><tr><th>Asset</th><th>Return</th><th>Vol.</th><th>Return/vol</th></tr></thead><tbody>`;
+  for(let i=0;i<N;i++) a+=`<tr><td><span class="sw" style="background:${col(i)}"></span>${A.name[i]}</td><td>${pct(A.mu[i])}</td><td>${pct(A.sd[i])}</td><td>${(A.mu[i]/A.sd[i]).toFixed(2)}</td></tr>`;
+  $("tAssump").innerHTML=a+"</tbody>";
+
+  const o=baseOpts(); o.interaction={mode:"nearest",intersect:true};
+  o.scales.x={...o.scales.x,type:"linear",title:{display:true,text:L("Volatility","Volatilidad"),color:css("--fg-3")},ticks:{...o.scales.x.ticks,callback:v=>v+"%"},grid:{color:css("--line")}};
+  o.scales.y.title={display:true,text:L("Expected return","Retorno esperado"),color:css("--fg-3")}; o.scales.y.ticks.callback=v=>v+"%";
+  o.plugins.tooltip.callbacks={label:c=>NL(` ${c.raw.n}: ${c.raw.y.toFixed(2)}% / ${c.raw.x.toFixed(2)}%`)};
+  const assets={label:"Assets",data:A.mu.map((m,i)=>({x:A.sd[i]*100,y:m*100,n:AN(i)})),pointBackgroundColor:A.key.map((k,i)=>col(i)),pointRadius:6,pointBorderColor:css("--surface"),pointBorderWidth:2};
+  const cur={label:"Current",data:[{x:cs.vol*100,y:cs.r*100,n:L("Current mix","Cartera actual")}],pointBackgroundColor:css("--surface"),pointBorderColor:css("--fg-2"),pointBorderWidth:2.5,pointRadius:8,pointStyle:"rectRot"};
+  const tgt={label:"Target",data:[{x:ts.vol*100,y:ts.r*100,n:L("Target mix","Cartera objetivo")}],pointBackgroundColor:css("--target"),pointBorderColor:css("--target"),pointBorderWidth:2,pointRadius:11,pointStyle:"star"};
+  mk("m","cMap",{type:"scatter",data:{datasets:[assets,cur,tgt]},options:o,plugins:[{id:"lbl",afterDatasetsDraw(ch){const ctx=ch.ctx;ctx.save();[[1,"Current",css("--fg-2")],[2,"Target",css("--target")]].forEach(([d,t,c])=>{const p=ch.getDatasetMeta(d).data[0];if(p){ctx.fillStyle=c;ctx.font=(t==="Target"?"700 12px":"600 11px")+" IBM Plex Sans";ctx.fillText(t==="Target"?L("Target","Objetivo"):L("Current","Actual"),p.x+13,p.y+4);}});ctx.restore();}}]});
+}
+
+function renderPlan(tr){
+  const T0=tr.buys[0];
+  const months=S.yrs*12;
+  const gEnd=gap(tr.path[months].h,S.tgt), g0=gap(tr.path[0].h,S.tgt);
+  let reach=null; for(const p of tr.path){ if(gap(p.h,S.tgt)<=0.10){reach=p.m;break;} }
+  $("planCallout").innerHTML=`<div class="n">${(gEnd*100).toFixed(0)}%</div><div><b>${L(`Gap to target after ${S.yrs} years`,`Brecha con el objetivo a ${S.yrs} años`)}</b> (${L("starting at","parte en")} ${(g0*100).toFixed(0)}%). ${reach===0?L(`The portfolio starts on target.`,`La cartera parte en el objetivo.`):reach!==null?L(`The portfolio is within 10% of the target by month ${reach} (year ${(reach/12).toFixed(1)}).`,`La cartera queda a menos de 10% del objetivo en el mes ${reach} (año ${(reach/12).toFixed(1)}).`):L(`Using contributions alone, the gap stays above 10% for the whole horizon, so the legacy holdings keep a visible weight.`,`Solo con aportes, la brecha se mantiene sobre 10% todo el horizonte, así que la cartera antigua conserva un peso visible.`)} ${S.sell>0?L(`Includes a one-off sale of ${S.sell}% of legacy holdings at the start.`,`Incluye una venta única de ${S.sell}% de la cartera antigua al inicio.`):L(`No holdings are sold. Raise “Sell legacy at start” to see the effect of a partial sale.`,`No se vende nada. Sube “Vender cartera antigua al inicio” para ver el efecto de una venta parcial.`)}</div>`;
+
+  const used=[...Array(N).keys()].filter(i=>S.tgt[i]>0||S.cur[i]>0);
+  if(T0){
+    const before=tr.path[T0.m-1].h.map((x,i)=>x*Math.pow(1+A.mu[i],1/12));
+    const Tb=total(before), Ta=total(T0.h);
+    let f=`<thead><tr><th>Asset class</th><th>Holding before</th><th>Buy</th><th>Weight after</th><th>Target</th></tr></thead><tbody>`;
+    used.forEach(i=>{f+=`<tr><td><span class="sw" style="background:${col(i)}"></span>${AN(i)}</td><td>${eur(before[i])}</td><td>${T0.buy[i]>0.5?eur(T0.buy[i]):'–'}</td><td>${pct(T0.h[i]/Ta,1)}</td><td>${pct(S.tgt[i]/100,1)}</td></tr>`;});
+    f+=`<tr class="total"><td>${L("Month","Mes")} ${T0.m}</td><td>${eur(Tb)}</td><td>${eur(S.con)}</td><td>100%</td><td>100%</td></tr></tbody>`;
+    $("tFirst").innerHTML=f;
+    let s=`<thead><tr><th>Month</th>${used.filter(i=>S.tgt[i]>0).map(i=>`<th>${AN(i)}</th>`).join("")}<th>Portfolio</th><th>Gap</th></tr></thead><tbody>`;
+    tr.buys.slice(0,12).forEach(b=>{s+=`<tr><td>${b.m}</td>${used.filter(i=>S.tgt[i]>0).map(i=>`<td>${b.buy[i]>0.5?eur(b.buy[i]):'–'}</td>`).join("")}<td>${eur(total(b.h))}</td><td>${pct(gap(b.h,S.tgt),1)}</td></tr>`;});
+    $("tSched").innerHTML=s+"</tbody>";
+  } else { $("tFirst").innerHTML="<tbody><tr><td>No contributions inside the horizon.</td></tr></tbody>"; $("tSched").innerHTML=""; }
+
+  const labels=[], sets=used.map(i=>({label:AN(i),data:[],backgroundColor:col(i),borderColor:css("--surface"),borderWidth:{top:2},borderSkipped:false,stack:"s"}));
+  for(let y=0;y<=S.yrs;y++){ const h=tr.path[y*12].h, T=total(h); labels.push(L("Y","A")+y); used.forEach((i,k)=>sets[k].data.push(h[i]/T*100)); }
+  legend("lgDrift",used.map(i=>[AN(i),col(i)]),true);
+  const o=baseOpts(); o.scales.x.stacked=true; o.scales.y.stacked=true; o.scales.y.max=100; o.scales.y.ticks.callback=v=>v+"%";
+  o.plugins.tooltip.callbacks={label:c=>NL(` ${c.dataset.label}: ${c.parsed.y.toFixed(1)}%`)};
+  mk("d","cDrift",{type:"bar",data:{labels,datasets:sets},options:o});
+}
+
+function renderRisk(cs,ts){
+  const v=(s,z)=>s.r-z*s.vol;
+  const rows=[["VaR 99%, 1 year",2.33],["Expected Shortfall 99%, 1 year",2.66851296240054]];
+  let r=`<thead><tr><th>Metric</th><th>Current %</th><th>Current US$</th><th>Target %</th><th>Target US$</th></tr></thead><tbody>`;
+  rows.forEach(([n,z])=>{const a=v(cs,z),b=v(ts,z);r+=`<tr><td>${n}</td><td>${pct(a,1)}</td><td>${eur(a*S.cap)}</td><td>${pct(b,1)}</td><td>${eur(b*S.cap)}</td></tr>`;});
+  const pNeg=s=>{const z=-s.r/s.vol;return 0.5*(1+erf(z/Math.SQRT2));};
+  r+=`<tr><td>Probability of a negative year</td><td>${pct(pNeg(cs),0)}</td><td></td><td>${pct(pNeg(ts),0)}</td><td></td></tr></tbody>`;
+  $("tRisk").innerHTML=r;
+  const hc=hist(S.cur), ht=hist(S.tgt);
+  let h=`<thead><tr><th>Metric (30 years of monthly data)</th><th>Current</th><th>Target</th></tr></thead><tbody>`;
+  [["Annual return (geometric)",hc.g,ht.g],["Annual volatility",hc.sd,ht.sd],
+   ["Parametric VaR 99%, annual (μ − 2.33σ)",hc.g-2.33*hc.sd,ht.g-2.33*ht.sd],["Parametric ES 99%, annual (μ − 2.6685σ)",hc.g-ZES*hc.sd,ht.g-ZES*ht.sd],
+   ["Historical VaR 99%, monthly",hc.hvar,ht.hvar],["Historical ES 99%, monthly",hc.hes,ht.hes]].forEach(([n,x,y])=>{h+=`<tr><td>${n}</td><td>${pct(x,1)}</td><td>${pct(y,1)}</td></tr>`;});
+  $("tHist").innerHTML=h+"</tbody>";
+  let tl=`<thead><tr><th>${L("Monthly figure","Cifra mensual")}</th><th>${L("Current","Actual")}</th><th>${L("Target","Objetivo")}</th></tr></thead><tbody>`;
+  [[L("Historical VaR 99% (1st percentile)","VaR histórico 99% (percentil 1)"),pct(hc.hvar,1),pct(ht.hvar,1)],
+   [L("Parametric VaR 99% (μ − 2.33σ, normal)","VaR paramétrico 99% (μ − 2.33σ, normal)"),pct(hc.pvm,1),pct(ht.pvm,1)],
+   [L("Months worse than the parametric VaR","Meses peores que el VaR paramétrico"),hc.below,ht.below],
+   [L("Months a normal distribution expects (1%)","Meses que espera una normal (1%)"),(0.01*HD.r.length).toFixed(1),(0.01*HD.r.length).toFixed(1)],
+   [L("Worst month, standard deviations below the mean","Peor mes, desviaciones estándar bajo la media"),hc.wsd.toFixed(1)+"σ",ht.wsd.toFixed(1)+"σ"]].forEach(([n,a,b])=>{tl+=`<tr><td>${n}</td><td>${a}</td><td>${b}</td></tr>`;});
+  $("tTail").innerHTML=tl+"</tbody>";
+  $("tailSrc").textContent=L(`The real left tail is fatter than the normal curve: ${ht.below} months fell below the target's parametric VaR, against ${(0.01*HD.r.length).toFixed(1)} expected, and its worst month sits ${ht.wsd.toFixed(1)} standard deviations below the mean, which a normal distribution makes extremely unlikely.`,`La cola izquierda real es más gruesa que la curva normal: ${ht.below} meses quedaron bajo el VaR paramétrico del objetivo, contra ${(0.01*HD.r.length).toFixed(1)} esperados, y su peor mes está ${ht.wsd.toFixed(1)} desviaciones estándar bajo la media, algo extremadamente improbable con una normal.`);
+  let s=`<thead><tr><th>Episode</th><th>Current</th><th>Current US$</th><th>Target</th><th>Target US$</th></tr></thead><tbody>`;
+  STRESSN.forEach((n,k)=>{const x=hc.stress[k],y=ht.stress[k];s+=`<tr><td>${n}</td><td class="${x<0?'down':'up'}">${pct(x,1)}</td><td>${eur(x*S.cap)}</td><td class="${y<0?'down':'up'}">${pct(y,1)}</td><td>${eur(y*S.cap)}</td></tr>`;});
+  $("tStress").innerHTML=s+"</tbody>";
+  const dG=ht.stress[0]-hc.stress[0];
+  $("stressNote").innerHTML=L(`In the GFC the target would have lost ${pct(-ht.stress[0],1)} (${eur(ht.stress[0]*S.cap)} on the initial capital), ${Math.abs(dG*100).toFixed(1)} pp ${dG<0?'more':'less'} than the current mix. ${dG<0?'Monthly contributions keep buying after a fall, which helps a long-horizon saver recover. If a loss of this size is not acceptable, lower the risk profile.':'The target is the more defensive mix in this crisis.'}`,`En la GFC el objetivo habría perdido ${pct(-ht.stress[0],1)} (${eur(ht.stress[0]*S.cap)} sobre el capital inicial), ${Math.abs(dG*100).toFixed(1)} pp ${dG<0?'más':'menos'} que la cartera actual. ${dG<0?'Los aportes mensuales siguen comprando después de una caída, lo que ayuda a recuperarse a un ahorrante de largo plazo. Si una pérdida de este tamaño no es aceptable, baja el perfil de riesgo.':'El objetivo es la cartera más defensiva en esta crisis.'}`);
+  const c=S.prof.ccy, fx=+S.prof.fx||0;
+  $("ccyNote").innerHTML= c==="USD" ? L(`<b>Currency.</b> The model and all amounts are in US dollars, the same currency the client saves in, so there is no currency mismatch.`,`<b>Moneda.</b> El modelo y todos los montos están en dólares, la misma moneda en que ahorra el cliente, así que no hay descalce cambiario.`) : L(`<b>Currency.</b> The model and all amounts are in US dollars. The client earns and saves in ${c}${fx?` (${fx.toLocaleString("en-US")} ${c} per US$)`:''}. ${c}/USD moves are outside the model and add risk to the client's local-currency wealth.${c==="CLP"?' The peso tends to weaken when global markets fall, so a USD portfolio partly protects a CLP saver in a crisis.':''}`,`<b>Moneda.</b> El modelo y todos los montos están en dólares. El cliente gana y ahorra en ${c}${fx?` (${fx.toLocaleString("en-US")} ${c} por US$)`:''}. Los movimientos ${c}/USD quedan fuera del modelo y agregan riesgo al patrimonio en moneda local.${c==="CLP"?' El peso tiende a depreciarse cuando caen los mercados globales, así que una cartera en dólares protege en parte a un ahorrante en pesos durante una crisis.':''}`);
+}
+function renderMandate(cs,ts,pk){
+  const P=S.prof, w=S.tgt, nz=[...Array(N).keys()].filter(i=>w[i]>0.05).sort((a,b)=>w[b]-w[a]);
+  const mix=nz.map(i=>`${w[i].toFixed(1)}% ${AN(i)}`).join(", ");
+  const ok=constraints(w).every(c=>c[2]); const R=RISKT()[pk.want], O=OBJT()[P.obj];
+  const gfc=pct(hist(w).stress[0],0), va=pct(ts.r-2.33*ts.vol,1), ve=eur((ts.r-2.33*ts.vol)*S.cap);
+  const how = S.preset==="rec" ? L(` (Solver frontier portfolio at ${pct(FRONT[pk.idx][0],0)} volatility${pk.capped?', stepped down from '+R[1]+' to respect the VaR limit':''})`,` (cartera de la frontera de Solver con ${pct(FRONT[pk.idx][0],0)} de volatilidad${pk.capped?', bajada desde '+R[1]+' para respetar el límite de VaR':''})`) : L(' (custom)',' (personalizada)');
+  const note=P.note?' '+P.note.replace(/\.?$/,'.'):'';
+  $("mandateText").innerHTML=L(
+   `${O[0]} mandate for a ${P.name}, ${R[0].toLowerCase()} risk profile, analysed in US dollars over ${S.yrs} years. Starting capital ${eur(S.cap)} plus ${eur(S.con)} a month from month ${S.car+1}${S.car>0?`; the first ${S.car} contributions are kept outside the portfolio for a known need (${P.liq})`:''}. The client tolerates a model 1-year 99% VaR of about ${(+P.loss).toFixed(0)}% and has confirmed he would stay invested through a 2008-type drawdown (about ${gfc} peak-to-trough for this portfolio). Target portfolio${how}: ${mix}. Expected return ${pct(ts.r)}, volatility ${pct(ts.vol)}, Sharpe ${ts.sh.toFixed(2)}; 1-year 99% VaR ${va} (${ve}). IPS limits: gold ≤10%, high yield ≤20%, EM ≤20%, non-US ≤40% of stocks, international developed ≥10%, small caps ≤10% each, no asset above 50%, no leverage or shorts. ${ok?'The target meets every limit.':'<b>The target breaks at least one IPS limit; see the Allocation tab.</b>'}${note}`,
+   `Mandato de ${O[0].toLowerCase()} para un ${P.name}, perfil de riesgo ${R[0].toLowerCase()}, analizado en dólares a ${S.yrs} años. Capital inicial de ${eur(S.cap)} más ${eur(S.con)} al mes desde el mes ${S.car+1}${S.car>0?`; los primeros ${S.car} aportes se mantienen fuera de la cartera para una necesidad conocida (${P.liq})`:''}. El cliente tolera un VaR de modelo a 1 año al 99% de cerca de ${(+P.loss).toFixed(0)}% y confirmó que se mantendría invertido en una caída tipo 2008 (cerca de ${gfc} de máximo a mínimo para esta cartera). Cartera objetivo${how}: ${mix}. Retorno esperado ${pct(ts.r)}, volatilidad ${pct(ts.vol)}, Sharpe ${ts.sh.toFixed(2)}; VaR 99% a 1 año ${va} (${ve}). Límites del IPS: oro ≤10%, high yield ≤20%, EM ≤20%, no-EE.UU. ≤40% de las acciones, internacional desarrollado ≥10%, small caps ≤10% cada una, ningún activo sobre 50%, sin apalancamiento ni posiciones cortas. ${ok?'El objetivo cumple todos los límites.':'<b>El objetivo rompe al menos un límite del IPS; revisa la pestaña Asignación.</b>'}${note}`);
+  const cells=[["Objective",O[0]],["Horizon",S.yrs+L(" years"," años")],["Risk profile",R[0]+" · "+pct(ts.vol,0)+" vol"],["VaR limit","−"+(+P.loss).toFixed(1)+L("% (99%, 1 year)","% (99%, 1 año)")],["Liquidity",S.car>0?S.car+L(" months set aside"," meses reservados"):L("None","Ninguna")],["Currency",L("USD model · "+P.ccy+" saver","Modelo en USD · ahorra en "+P.ccy)],["Rebalancing",L("Through contributions","Con aportes")],["IPS limits",ok?L("All met","Todos cumplidos"):L("Breached","Incumplidos")]];
+  $("mandateGrid").innerHTML=cells.map(([k,v])=>`<div class="mcell"><div class="k">${k}</div><div class="v">${v}</div></div>`).join("");
+}
+function renderExplain(pk){
+  const P=S.prof, R=RISKT()[pk.want], fx=+P.fx||0;
+  $("xObj").textContent=OBJT()[P.obj][1];
+  $("xRisk").textContent=L(`Target volatility ${R[1]}. ${R[2]}`,`Volatilidad objetivo ${R[1]}. ${R[2]}`);
+  $("xLoss").textContent=L(`= ${eur(-(+P.loss/100)*S.cap)} on ${eur(S.cap)}. Model loss the client tolerates in a bad year (normal distribution). Real crises can be deeper: see the stress test. If the profile's portfolio has a larger VaR, the planner steps down the frontier.`,`= ${eur(-(+P.loss/100)*S.cap)} sobre ${eur(S.cap)}. Pérdida de modelo que el cliente tolera en un mal año (distribución normal). Las crisis reales pueden ser más profundas: ver el stress test. Si la cartera del perfil tiene un VaR mayor, la herramienta baja por la frontera.`);
+  $("xCcy").textContent= P.ccy==="USD" ? L("The client saves in US dollars, so there is no currency mismatch with the model.","El cliente ahorra en dólares, así que no hay descalce cambiario con el modelo.") : L(`All amounts are in US dollars. ${P.ccy}/USD risk is declared outside the model.`,`Todos los montos están en dólares. El riesgo ${P.ccy}/USD se declara fuera del modelo.`);
+  $("xCon").textContent= (P.ccy!=="USD"&&fx>0 ? L(`≈ ${P.ccy} ${Math.round(S.con*fx).toLocaleString("en-US")} a month at ${fx.toLocaleString("en-US")} ${P.ccy}/US$. `,`≈ ${P.ccy} ${Math.round(S.con*fx).toLocaleString("en-US")} al mes a ${fx.toLocaleString("en-US")} ${P.ccy}/US$. `) : "")+L("Added at each month end.","Se agrega a fin de cada mes.");
+  $("xLiq").textContent= S.car>0 ? L(`The first ${S.car} contributions (≈ ${eur(S.car*S.con)}) go to a short-term account outside the portfolio. Investing starts in month ${S.car+1}.`,`Los primeros ${S.car} aportes (≈ ${eur(S.car*S.con)}) van a una cuenta de corto plazo fuera de la cartera. La inversión parte en el mes ${S.car+1}.`) : L("No short-term need: investing starts in month 1.","Sin necesidad de corto plazo: la inversión parte en el mes 1.");
+}
+function scen(cap,s,y){return [cap*Math.pow(1+s.r-1.65*s.vol,y),cap*Math.pow(1+s.r,y),cap*Math.pow(1+s.r+1.65*s.vol,y)];}
+function cone(cap,s,y){const m=Math.log(1+s.r)*y, d=1.65*s.vol*Math.sqrt(y);return [cap*Math.exp(m-d),cap*Math.exp(m),cap*Math.exp(m+d)];}
+function renderScen(cs,ts){
+  $("scenSub").textContent=L(`Initial capital only, ${S.yrs}-year horizon. Template method: capital × (1 + μ ± 1.65σ)^t. Standard cone: capital × exp(ln(1+μ)·t ± 1.65σ√t).`,`Solo capital inicial, horizonte de ${S.yrs} años. Método de la plantilla: capital × (1 + μ ± 1.65σ)^t. Cono estándar: capital × exp(ln(1+μ)·t ± 1.65σ√t).`);
+  const a=scen(S.cap,cs,S.yrs), b=scen(S.cap,ts,S.yrs), c=cone(S.cap,cs,S.yrs), d=cone(S.cap,ts,S.yrs);
+  let r=`<thead><tr><th>Scenario</th><th>Template: current</th><th>Template: target</th><th>Cone: current</th><th>Cone: target</th></tr></thead><tbody>`;
+  ["Bear (5th percentile)","Base (expected return)","Bull (95th percentile)"].forEach((n,i)=>{r+=`<tr><td>${n}</td><td>${eur(a[i])}</td><td>${eur(b[i])}</td><td>${eur(c[i])}</td><td>${eur(d[i])}</td></tr>`;});
+  $("tScen").innerHTML=r+"</tbody>";
+}
+const fpts = () => FRONT.map(f=>{const w=f[2].map(x=>x*100);const st=stats(w,S.rf/100);return {w,st,risk:st.vol,ret:st.r};});
+function sameW(a,b){return a.every((x,i)=>Math.abs(x-b[i])<0.05);}
+function renderFront(cs,ts){
+  const pts=fpts();
+  const o=baseOpts(); o.interaction={mode:"nearest",intersect:true};
+  o.scales.x={...o.scales.x,type:"linear",min:4,max:22,title:{display:true,text:L("Volatility (annual)","Volatilidad (anual)"),color:css("--fg-3")},ticks:{...o.scales.x.ticks,callback:v=>v+"%"},grid:{color:css("--line")}};
+  o.scales.y.min=4; o.scales.y.max=10; o.scales.y.title={display:true,text:L("Expected return","Retorno esperado"),color:css("--fg-3")}; o.scales.y.ticks.callback=v=>v+"%";
+  o.plugins.tooltip.callbacks={label:c=>NL(L(` ${c.raw.n}: return ${c.raw.y.toFixed(2)}%, risk ${c.raw.x.toFixed(2)}%`,` ${c.raw.n}: retorno ${c.raw.y.toFixed(2)}%, riesgo ${c.raw.x.toFixed(2)}%`))};
+  const cB=css("--accent"), cA=css("--fg-2");
+  legend("lgFront",[["Efficient frontier",cB],[L("Unconstrained frontier (dashed)","Frontera sin restricciones (punteada)"),css("--fg-3"),true],[L("Target ★ ","Objetivo ★ ")+pct(ts.vol,1)+" / "+pct(ts.r),css("--target")],["Current ◆",cA],["Asset classes",css("--fg-3")]]);
+  const ds=[
+    {label:"Frontier",data:pts.map(p=>({x:p.risk*100,y:p.ret*100,n:L("Frontier ","Frontera ")+(p.risk*100).toFixed(1)+"%"})),showLine:true,borderColor:cB,backgroundColor:cB,borderWidth:2.5,pointRadius:4,tension:.3},
+    {label:"Unconstrained",data:UNC.map(u=>({x:u[0]*100,y:u[1]*100,n:L("Unconstrained ","Sin restricciones ")+(u[0]*100).toFixed(0)+"%"})),showLine:true,borderColor:css("--fg-3"),backgroundColor:css("--fg-3"),borderDash:[6,4],borderWidth:2,pointRadius:2.5,tension:.3},
+    {label:"Assets",data:A.mu.map((m,i)=>({x:A.sd[i]*100,y:m*100,n:AN(i)})),pointBackgroundColor:A.key.map((k,i)=>col(i)),pointRadius:5,pointBorderColor:css("--surface"),pointBorderWidth:2},
+    {label:"Current",data:[{x:cs.vol*100,y:cs.r*100,n:L("Current mix","Cartera actual")}],pointBackgroundColor:css("--surface"),pointBorderColor:cA,pointBorderWidth:2.5,pointRadius:9,pointStyle:"rectRot"},
+    {label:"Target",data:[{x:ts.vol*100,y:ts.r*100,n:L("Target mix","Cartera objetivo")}],pointBackgroundColor:css("--target"),pointBorderColor:css("--target"),pointBorderWidth:2,pointRadius:13,pointStyle:"star"}];
+  mk("f","cFront",{type:"scatter",data:{datasets:ds},options:o,plugins:[{id:"lblF",afterDatasetsDraw(ch){const ctx=ch.ctx;ctx.save();ctx.font="600 11px IBM Plex Sans";[[3,"Current",css("--fg-2")],[4,"Target",css("--target")]].forEach(([d,t,c])=>{const p=ch.getDatasetMeta(d).data[0];if(p){ctx.fillStyle=c;ctx.font=(t==="Target"?"700 12px":"600 11px")+" IBM Plex Sans";ctx.fillText(t==="Target"?L("Target","Objetivo"):L("Current","Actual"),p.x+14,p.y+4);}});ctx.restore();}}]});
+  // same-risk comparison: interpolate frontier at current risk
+  let same=null; for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1];if(cs.vol>=a.risk&&cs.vol<=b.risk){same=a.ret+(b.ret-a.ret)*(cs.vol-a.risk)/(b.risk-a.risk);}}
+  $("frontNote").innerHTML= same!==null ? L(`<b>At the current portfolio's risk (${pct(cs.vol)})</b> the frontier offers about ${pct(same)} expected return, ${pp(same-cs.r)} more for the same risk. The frontier ends at ${pct(pts[pts.length-1].risk)} volatility (50% LC Growth / 40% LC Value / 10% Intl) because of the 50% cap per asset, the 10% international minimum and no leverage.`,`<b>Al riesgo de la cartera actual (${pct(cs.vol)})</b> la frontera ofrece cerca de ${pct(same)} de retorno esperado, ${pp(same-cs.r)} más por el mismo riesgo. La frontera termina en ${pct(pts[pts.length-1].risk)} de volatilidad (50% LC Growth / 40% LC Value / 10% Intl) por el tope de 50% por activo, el mínimo de 10% internacional y la ausencia de apalancamiento.`) : L(`The current portfolio sits outside the plotted frontier range.`,`La cartera actual queda fuera del rango de la frontera.`);
+  { const v=ts.vol; let u=null; for(let i=0;i<UNC.length-1;i++){ if(v>=UNC[i][0]-1e-9&&v<=UNC[i+1][0]+1e-9) u=UNC[i][1]+(UNC[i+1][1]-UNC[i][1])*(v-UNC[i][0])/(UNC[i+1][0]-UNC[i][0]); }
+    if(u!==null) $("frontNote").innerHTML+=L(` <b>Cost of the IPS constraints:</b> without them (weights ≥ 0 only) the frontier offers ${pct(u)} at ${pct(v,1)} risk, ${pp(u-ts.r).replace("+","")} more than the target. Across 6% to 14% risk the cost is 0.15 to 0.37 pp. The unconstrained optimum holds up to 34% gold and no international stocks, which the IPS rules out for diversification.`,` <b>Costo de las restricciones del IPS:</b> sin ellas (solo pesos ≥ 0) la frontera ofrece ${pct(u)} con ${pct(v,1)} de riesgo, ${pp(u-ts.r).replace("+","")} más que el objetivo. Entre 6% y 14% de riesgo el costo va de 0,15 a 0,37 pp. El óptimo sin restricciones llega a 34% en oro y no tiene acciones internacionales, algo que el IPS descarta por diversificación.`); }
+  const cols=[...Array(N).keys()].filter(i=>pts.some(p=>p.w[i]>0.05)); // every asset class held at any frontier point
+  let r=`<thead><tr><th>Risk</th><th>Return</th><th>${L("Unconstrained","Sin restricciones")}</th><th>Sharpe</th><th>VaR 99% 1y</th>${cols.map(i=>`<th>${AN(i)}</th>`).join("")}<th></th></tr></thead><tbody>`;
+  pts.forEach((p,k)=>{const v=p.ret-2.33*p.risk;const on=sameW(p.w,S.tgt);
+    r+=`<tr class="${on?'hl':''}"><td>${pct(p.risk,1)}${k===pts.length-1?L(' (end)',' (fin)'):''}</td><td>${pct(p.ret)}</td><td>${k<UNC.length?pct(UNC[k][1])+' <span style="color:var(--fg-3)">(+'+((UNC[k][1]-p.ret)*100).toFixed(2)+')</span>':'–'}</td><td>${p.st.sh.toFixed(2)}</td><td>${eur(v*S.cap)}</td>${cols.map(i=>`<td>${p.w[i]>0.05?p.w[i].toFixed(1)+'%':'–'}</td>`).join("")}<td><button type="button" class="mini ${on?'on':''}" data-front="${k}">${on?'Target':'Use as target'}</button>${k===profilePick().idx?' <span class="pill ok">Profile</span>':''}</td></tr>`;});
+  $("tFront").innerHTML=r+"</tbody>";
+  let rb=`<thead><tr><th>Scenario</th><th>Risk</th><th>Return</th><th>Sharpe</th><th>LC Growth / LC Value / Intl / Gold / Bonds / HY (%)</th></tr></thead><tbody>`;
+  ROB.forEach(([n,rk,ret,sh,w])=>{rb+=`<tr><td>${n}</td><td>${pct(rk,1)}</td><td>${pct(ret)}</td><td>${sh.toFixed(2)}</td><td>${w}</td></tr>`;});
+  $("tRob").innerHTML=rb+"</tbody>";
+}
+function renderLoss(ts){
+  const L0=Math.max(0,isNaN(+S.prof.loss)?20:+S.prof.loss)/100;
+  const pts=fpts().slice(0,-1);
+  const tv=ts.r-2.33*ts.vol, fits=-tv<=L0;
+  const pk=profilePick(), R=RISKT()[pk.want], P=pts[pk.idx], pv=P.ret-2.33*P.risk;
+  const head = pk.none ? L(`<b>The VaR limit is tighter than any frontier portfolio.</b> Even the 6% portfolio has a 1-year VaR of ${pct(pv,1)}; the planner uses it and flags the gap. Keep more savings outside the portfolio or revisit the limit.`,`<b>El límite de VaR es más estricto que cualquier cartera de la frontera.</b> Incluso la cartera de 6% tiene un VaR a 1 año de ${pct(pv,1)}; la herramienta la usa y marca la diferencia. Mantén más ahorro fuera de la cartera o revisa el límite.`)
+    : pk.capped ? L(`<b>The ${R[0].toLowerCase()} profile (${R[1]}) breaks the ${pct(L0,1)} VaR limit</b>, so the planner steps down to the ${pct(P.risk,0)} portfolio: ${pct(P.ret)} expected return, VaR ${pct(pv,1)} (${eur(pv*S.cap)}).`,`<b>El perfil ${R[0].toLowerCase()} (${R[1]}) supera el límite de VaR de ${pct(L0,1)}</b>, así que la herramienta baja a la cartera de ${pct(P.risk,0)}: ${pct(P.ret)} de retorno esperado, VaR ${pct(pv,1)} (${eur(pv*S.cap)}).`)
+    : L(`<b>The ${R[0].toLowerCase()} profile (${R[1]}) fits the ${pct(L0,1)} VaR limit.</b> Recommended frontier portfolio: ${pct(P.risk,0)} volatility, ${pct(P.ret)} expected return, VaR ${pct(pv,1)} (${eur(pv*S.cap)}).${pk.lossIdx>pk.idx?` The VaR limit alone would allow up to the ${pct(pts[pk.lossIdx].risk,0)} portfolio; the risk profile is the binding choice.`:''}`,`<b>El perfil ${R[0].toLowerCase()} (${R[1]}) cumple el límite de VaR de ${pct(L0,1)}.</b> Cartera recomendada de la frontera: ${pct(P.risk,0)} de volatilidad, ${pct(P.ret)} de retorno esperado, VaR ${pct(pv,1)} (${eur(pv*S.cap)}).${pk.lossIdx>pk.idx?` El límite de VaR por sí solo permitiría hasta la cartera de ${pct(pts[pk.lossIdx].risk,0)}; manda el perfil de riesgo.`:''}`);
+  const tgtLine = S.preset==="rec" ? "" : L(` Current custom target: VaR `,` Objetivo personalizado actual: VaR `)+`${pct(tv,1)} <span class="pill ${fits?'ok':'no'}">${fits?'within limit':'above limit'}</span> <button type="button" class="mini" data-front="${pk.idx}" style="margin-left:6px">Use recommended portfolio</button>`;
+  $("lossCallout").innerHTML=`<div class="n">${pct(P.risk,0)}</div><div>${head}${tgtLine}</div>`;
+  const T=S.yrs, o=S.prof.obj, rv=+pk.want, ch=[];
+  ch.push([T>=5||rv<=3,L(`Horizon ${T} years`,`Horizonte de ${T} años`)+(T<5&&rv>3?L(' is short for this risk level',' es corto para este nivel de riesgo'):'')]);
+  ch.push([!(o==="preserve"&&rv>0)&&!(o==="income"&&rv>3),L(`Objective vs risk profile`,`Objetivo vs perfil de riesgo`)+((o==="preserve"&&rv>0)||(o==="income"&&rv>3)?L(': mismatch',': no calzan'):'')]);
+  ch.push([fits,L(`Target VaR ${pct(tv,1)} vs limit −${(L0*100).toFixed(1)}%`,`VaR del objetivo ${pct(tv,1)} vs límite −${(L0*100).toFixed(1)}%`)]);
+  ch.push([constraints(S.tgt).every(c=>c[2]),L("IPS limits","Límites del IPS")]);
+  { const ht=hist(S.tgt); $("tailNote").innerHTML=L(`<b>Model vs history.</b> The parametric VaR (${pct(tv,1)}) understated real crises: calendar 2008 ${pct(ht.stress[1],1)}, GFC ${pct(ht.stress[0],1)}. Normal-distribution VaR misses fat tails, so the client must accept the stress-test losses, not only the VaR.`,`<b>Modelo vs historia.</b> El VaR paramétrico (${pct(tv,1)}) subestimó las crisis reales: año 2008 ${pct(ht.stress[1],1)}, GFC ${pct(ht.stress[0],1)}. El VaR con distribución normal no captura las colas gruesas, así que el cliente debe aceptar las pérdidas del stress test, no solo el VaR.`); }
+  $("suitChips").innerHTML=ch.map(([ok,t])=>`<span class="chip ${ok?'ok':'w'}">${ok?'✓':'!'} ${t}</span>`).join("");
+}
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-front]");if(!b)return;const f=FRONT[+b.dataset.front];S.tgt=f[2].map(x=>x*100);setPreset(+b.dataset.front===profilePick().idx?"rec":"custom",false);render();});
+// ---------- Retirement goal: required monthly contribution, current vs target ----------
+const GC={};
+function gSim(st,yrs,inf,glide,key){
+  if(GC[key]) return GC[key];
+  const n=5000, M=Math.round(yrs*12), R=rng32(98765), li=Math.log(1+inf)/12, f9=stats(FRONT[3][2].map(x=>x*100),S.rf/100);
+  const A=new Float64Array(n).fill(1), B=new Float64Array(n), yr=[]; for(let y=0;y<=yrs;y++) yr.push([new Float64Array(n),new Float64Array(n)]);
+  yr[0][0].fill(1);
+  for(let m=1;m<=M;m++){
+    const p=(glide&&st.vol>0.0901&&m>M-120)?{r:f9.r*(1-taxRate()),vol:f9.vol}:st, sm=p.vol/Math.sqrt(12), lm=Math.log(1+p.r)/12-0.5*sm*sm-li;
+    for(let i=0;i<n;i++){ const u1=Math.max(R(),1e-12),u2=R(); const g=Math.exp(lm+sm*Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2)); A[i]*=g; B[i]=B[i]*g+(m>S.car?1:0); }
+    if(m%12===0){ yr[m/12][0].set(A); yr[m/12][1].set(B); }
+  }
+  return GC[key]={A,B,yr,n};
+}
+const qt=(arr,p)=>{const a=Float64Array.from(arr).sort(); return a[Math.min(a.length-1,Math.floor(p*(a.length-1)))];};
+function gReq(sim,T,p){ const r=new Float64Array(sim.n); for(let i=0;i<sim.n;i++) r[i]=sim.B[i]>0?Math.max(0,(T-S.cap*sim.A[i])/sim.B[i]):Infinity; return qt(r,p); }
+function gProb(sim,T,c){ let k=0; for(let i=0;i<sim.n;i++) if(S.cap*sim.A[i]+c*sim.B[i]>=T) k++; return k/sim.n; }
+// Tax drag (pp of annual return), upper bound: assumes gains are realised every year
+function taxRate(){ const v=$("gTax").value; return v==="107"?0.10:v==="gc"?Math.max(0,Math.min(40,parseFloat($("gRate").value)||0))/100:0; }
+function renderGoal(cs,ts){
+  if($("t-goal").getAttribute("aria-selected")!=="true") return;
+  $("gRateF").hidden=$("gTax").value!=="gc";
+  const tr_=taxRate(), f9r=stats(FRONT[3][2].map(x=>x*100),S.rf/100).r, dRet=tr_*f9r;
+  const tx={none:L("No taxes: the figures are before tax.","Sin impuestos: las cifras son antes de impuestos."),
+    apv:L("APV Régimen A: returns are not taxed while they stay in the account, so the drag is close to 0. The state bonus (15%, capped at 6 UTM a year) is not included. Only part of the saving fits in the APV limits.","APV Régimen A: los retornos no pagan impuesto mientras sigan en la cuenta, así que el arrastre es cercano a 0. No incluye la bonificación del Estado (15%, con tope de 6 UTM al año). Solo una parte del ahorro cabe en los topes del APV."),
+    "107":L("Art. 107: 10% single tax on gains from eligible Chilean-listed shares, ETFs and funds. US-listed ETFs do not qualify. Modelled as 10% of the expected nominal return each year (upper bound: holding without selling defers it).","Art. 107: impuesto único de 10% sobre la ganancia de acciones, ETFs y fondos chilenos que cumplen requisitos. Los ETFs listados en EE.UU. no califican. Modelado como 10% del retorno nominal esperado cada año (cota superior: mantener sin vender lo posterga)."),
+    gc:L("Global Complementario: gains without special treatment pay your marginal bracket (up to 40%). Modelled as your bracket times the expected nominal return each year (upper bound: holding without selling defers it).","Global Complementario: las ganancias sin tratamiento especial pagan tu tramo marginal (hasta 40%). Modelado como tu tramo por el retorno nominal esperado cada año (cota superior: mantener sin vender lo posterga).")}[$("gTax").value];
+  $("gTaxX").innerHTML=tx+(tr_>0?L(` Tax drag: target ${pp(tr_*ts.r).replace("+","−")} a year, current ${pp(tr_*cs.r).replace("+","−")}; in retirement it lowers the sustainable withdrawal by ${pp(dRet).replace("+","")}.`,` Arrastre de impuestos: objetivo ${pp(tr_*ts.r).replace("+","−")} al año, actual ${pp(tr_*cs.r).replace("+","−")}; en el retiro baja el retiro sostenible en ${pp(dRet).replace("+","")}.`):"")+L(" Not tax advice; rules change and residence matters."," No es asesoría tributaria; las reglas cambian y la residencia importa.");
+  const g=id=>parseFloat($(id).value), fx=+S.prof.fx||0;
+  const inc=Math.max(0,g("gInc")||0), yrs=Math.max(1,Math.min(50,Math.round(g("gYrs")||30))), wr=Math.max(0.5,g("gWr")||4)/100, conf=parseFloat($("gConf").value), inf=(g("gInf")||0)/100, glide=$("gGlide").checked;
+  if(!fx){ $("gCallout").innerHTML=L("<div>Enter the exchange rate in the left panel (Rate per US$) to convert the CLP goal.</div>","<div>Ingresa el tipo de cambio en el panel izquierdo (Tipo de cambio por US$) para convertir la meta en CLP.</div>"); return; }
+  const T=inc*12/Math.max(0.005,wr-dRet)/fx, toC=x=>"CLP "+Math.round(x*fx).toLocaleString("en-US"), toCm=x=>"CLP "+(x*fx/1e6).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})+" M";
+  const base=[S.cap,S.con,S.car,yrs,inf,glide,S.rf].join("|");
+  const csT={r:cs.r*(1-tr_),vol:cs.vol}, tsT={r:ts.r*(1-tr_),vol:ts.vol};
+  const sc=gSim(csT,yrs,inf,false,"c|"+csT.r+"|"+cs.vol+"|"+base), st=gSim(tsT,yrs,inf,glide,"t|"+tsT.r+"|"+ts.vol+"|"+base+"|"+tr_);
+  const lv=[0.5,0.75,0.9], rc=lv.map(p=>gReq(sc,T,p)), rt=lv.map(p=>gReq(st,T,p)), pc_=gProb(sc,T,S.con), pt=gProb(st,T,S.con);
+  const k=lv.indexOf(conf), a=rc[k], b=rt[k], d=a-b;
+  $("gCallout").innerHTML=`<div class="n">${toCm(b)}</div><div><b>${L(`To receive ${"CLP "+inc.toLocaleString("en-US")} a month in ${yrs} years with ${Math.round(conf*100)}% confidence`,`Para recibir ${"CLP "+inc.toLocaleString("en-US")} al mes en ${yrs} años con ${Math.round(conf*100)}% de seguridad`)}</b>${L(", the client must invest each month:",", el cliente debe invertir al mes:")} ${L("target portfolio","cartera objetivo")} <b>${toC(b)}</b> (${eur(b)}), ${L("current portfolio","cartera actual")} <b>${toC(a)}</b> (${eur(a)}). ${d>0?L(`The target saves ${toC(d)} a month (${(d/a*100).toFixed(0)}% less).`,`El objetivo ahorra ${toC(d)} al mes (${(d/a*100).toFixed(0)}% menos).`):L(`The target does not reduce the saving needed at this confidence level.`,`El objetivo no reduce el ahorro necesario con este nivel de seguridad.`)} ${L("Capital needed:","Capital necesario:")} ${toCm(T)} (${eur(T)}).</div>`;
+  $("gSub").textContent=L(`Today's money, contributions from month ${S.car+1}, ${eur(S.cap)} invested today. Same 5,000 simulated futures for both portfolios.`,`Dinero de hoy, aportes desde el mes ${S.car+1}, ${eur(S.cap)} invertidos hoy. Los mismos 5.000 futuros simulados para ambas carteras.`).replace("5.000","5,000");
+  const rr=st_=>(1+st_.r*(1-tr_))/(1+inf)-1;
+  let h=`<thead><tr><th>${L("Portfolio","Cartera")}</th><th>${L("Expected real return","Retorno real esperado")}${tr_>0?L(" after tax"," después de impuestos"):""}</th><th>${L("Volatility","Volatilidad")}</th><th>50%</th><th>75%</th><th>90%</th><th>${L("Chance with","Prob. con")} ${eur(S.con)}</th></tr></thead><tbody>`;
+  [[L("Current mix","Cartera actual"),cs,rc,pc_],[L("Target mix","Cartera objetivo"),ts,rt,pt]].forEach(([n,s_,r,p])=>{h+=`<tr class="${s_===ts?'hl':''}"><td>${n}</td><td>${pct(rr(s_))}</td><td>${pct(s_.vol)}</td>${r.map(x=>`<td>${toCm(x)}<br><span style="color:var(--fg-3);font-size:11.5px">${eur(x)}</span></td>`).join("")}<td>${pct(p,0)}</td></tr>`;});
+  h+=`<tr><td>${L("Difference (current − target)","Diferencia (actual − objetivo)")}</td><td></td><td></td>${rc.map((x,i)=>`<td class="${x-rt[i]>=0?'up':'down'}">${toCm(x-rt[i])}</td>`).join("")}<td>${pp(pt-pc_).replace(" pp"," pp")}</td></tr></tbody>`;
+  $("gTab").innerHTML=h;
+  // chart: median and 10th percentile wealth with the current contribution
+  const labels=[], cm=[], c10=[], tm=[], t10=[], goal=[];
+  for(let y=0;y<=yrs;y++){ labels.push(L("Y","A")+y); const wc=new Float64Array(sc.n), wt=new Float64Array(st.n);
+    for(let i=0;i<sc.n;i++){ wc[i]=S.cap*sc.yr[y][0][i]+S.con*sc.yr[y][1][i]; wt[i]=S.cap*st.yr[y][0][i]+S.con*st.yr[y][1][i]; }
+    cm.push(qt(wc,0.5)); c10.push(qt(wc,0.1)); tm.push(qt(wt,0.5)); t10.push(qt(wt,0.1)); goal.push(T); }
+  const cT=css("--target"), cA=css("--fg-3"), cG=css("--good");
+  legend("lgGoal",[[L("Target: typical","Objetivo: típico"),cT],[L("Target: bad case (1 in 10)","Objetivo: caso malo (1 de 10)"),cT,true],[L("Current: typical","Actual: típico"),cA],[L("Current: bad case (1 in 10)","Actual: caso malo (1 de 10)"),cA,true],[L("Capital needed","Capital necesario"),cG]]);
+  const o=baseOpts(); o.scales.y.ticks.callback=v=>"$"+(v/1e6).toFixed(1)+"M"; o.scales.x.ticks.autoSkip=true; o.scales.x.ticks.maxTicksLimit=11;
+  o.plugins.tooltip.callbacks={label:c=>NL(` ${c.dataset.label}: ${eur(c.parsed.y)}`)};
+  mk("g","cGoal",{type:"line",data:{labels,datasets:[
+    {label:L("Target: typical","Objetivo: típico"),data:tm,borderColor:cT,borderWidth:2.5,pointRadius:0,tension:.2},
+    {label:L("Target: bad case","Objetivo: caso malo"),data:t10,borderColor:cT,borderDash:[5,4],borderWidth:1.5,pointRadius:0,tension:.2},
+    {label:L("Current: typical","Actual: típico"),data:cm,borderColor:cA,borderWidth:2.5,pointRadius:0,tension:.2},
+    {label:L("Current: bad case","Actual: caso malo"),data:c10,borderColor:cA,borderDash:[5,4],borderWidth:1.5,pointRadius:0,tension:.2},
+    {label:L("Capital needed","Capital necesario"),data:goal,borderColor:cG,borderDash:[2,3],borderWidth:2,pointRadius:0}]},options:o});
+  const inc_=x=>"CLP "+Math.round(x*wr/12*fx).toLocaleString("en-US");
+  $("gNote").innerHTML=L(`With ${eur(S.con)} a month, the typical case reaches ${eur(tm[yrs])} with the target (income of ${inc_(tm[yrs])} a month) and ${eur(cm[yrs])} with the current mix (${inc_(cm[yrs])} a month). Chance of reaching the goal: target ${pct(pt,0)}, current ${pct(pc_,0)}.${glide?" The target moves to the 9% frontier portfolio in the last 10 years; the current mix stays as it is.":""} Assumes the real USD/CLP rate stays stable; ${tr_>0?'taxes as set above; fees are not included':'taxes and fees are not included'}.`,
+    `Con ${eur(S.con)} al mes, el caso típico llega a ${eur(tm[yrs])} con el objetivo (renta de ${inc_(tm[yrs])} al mes) y a ${eur(cm[yrs])} con la cartera actual (${inc_(cm[yrs])} al mes). Probabilidad de llegar a la meta: objetivo ${pct(pt,0)}, actual ${pct(pc_,0)}.${glide?" El objetivo baja a la cartera de 9% de la frontera en los últimos 10 años; la cartera actual se mantiene como está.":""} Supone un tipo de cambio real USD/CLP estable; ${tr_>0?'impuestos según lo elegido arriba; no incluye comisiones':'no incluye impuestos ni comisiones'}.`);
+}
+function erf(x){const s=Math.sign(x);x=Math.abs(x);const t=1/(1+0.3275911*x);const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);return s*y;}
+
+function renderValid(){
+  const rf=DEF.rf/100, c=stats(DEF.cur,rf), t=stats(DEF.rec,rf), hc=hist(DEF.cur), ht=hist(DEF.rec);
+  const rowsV=[
+    ["Current: expected return",EXCEL.curR,c.r,"p"],["Current: volatility",EXCEL.curV,c.vol,"p"],["Current: Sharpe",EXCEL.curS,c.sh,"n"],
+    ["Recommended: expected return",EXCEL.recR,t.r,"p"],["Recommended: volatility",EXCEL.recV,t.vol,"p"],["Recommended: Sharpe",EXCEL.recS,t.sh,"n"],
+    ["Wealth in 10 years, current",EXCEL.curW10,fv(DEF.cap,DEF.con,c.r,DEF.car,120),"e"],["Wealth in 10 years, recommended",EXCEL.recW10,fv(DEF.cap,DEF.con,t.r,DEF.car,120),"e"],
+    ["Total invested, 10 years",EXCEL.inv,DEF.cap+DEF.con*(120-DEF.car),"e"],
+    ["Current: parametric VaR 99%, annual",EXCEL2.curPV,c.r-2.33*c.vol,"p"],["Recommended: parametric VaR 99%, annual",EXCEL2.recPV,t.r-2.33*t.vol,"p"],
+    ["Current: parametric ES 99%, annual",EXCEL2.curPES,c.r-2.66851296240054*c.vol,"p"],["Recommended: parametric ES 99%, annual",EXCEL2.recPES,t.r-2.66851296240054*t.vol,"p"],
+    ["Current: VaR on 30Y history",EXCEL2.curHPV,HIST.curR-2.33*HIST.curV,"p"],["Recommended: VaR on 30Y history",EXCEL2.recHPV,HIST.recR-2.33*HIST.recV,"p"],
+    ["Current: ES on 30Y history",EXCEL2.curHPES,HIST.curR-2.66851296240054*HIST.curV,"p"],["Recommended: ES on 30Y history",EXCEL2.recHPES,HIST.recR-2.66851296240054*HIST.recV,"p"],
+    ["Base case 10Y (capital only), recommended",EXCEL2.recBase,scen(DEF.cap,t,10)[1],"e"],
+    ["Bear case 10Y, current",EXCEL2.curBear,scen(DEF.cap,c,10)[0],"e"],["Bear case 10Y, recommended",EXCEL2.recBear,scen(DEF.cap,t,10)[0],"e"],
+    ["Bull case 10Y, current",EXCEL2.curBull,scen(DEF.cap,c,10)[2],"e"],["Bull case 10Y, recommended",EXCEL2.recBull,scen(DEF.cap,t,10)[2],"e"],
+    ["Frontier at 12% risk: return",0.08079578877314379,stats(FRONT[6][2].map(x=>x*100),rf).r,"p"],
+    ["Current: historical return 30Y",HIST.curR,hc.g,"p"],["Recommended: historical return 30Y",HIST.recR,ht.g,"p"],
+    ["Current: historical volatility 30Y",HIST.curV,hc.sd,"p"],["Recommended: historical volatility 30Y",HIST.recV,ht.sd,"p"],
+    ["Current: historical VaR 99% monthly",HIST.curHV,hc.hvar,"p"],["Recommended: historical VaR 99% monthly",HIST.recHV,ht.hvar,"p"],
+    ["Current: historical ES 99% monthly",HIST.curHES,hc.hes,"p"],["Recommended: historical ES 99% monthly",HIST.recHES,ht.hes,"p"],
+    ...STRESS.map((x,k)=>[["Current: ","Recommended: "].map(q=>q)[0]+x[0],x[1],hc.stress[k],"p"]),
+    ...STRESS.map((x,k)=>["Recommended: "+x[0],x[2],ht.stress[k],"p"]),
+    ...["bear","base","bull"].flatMap((nm,k)=>[["Cone 10Y "+nm+", current",EXCEL7.cone.cur[k],cone(DEF.cap,c,10)[k],"e"],["Cone 10Y "+nm+", recommended",EXCEL7.cone.rec[k],cone(DEF.cap,t,10)[k],"e"]]),
+    ["Unconstrained frontier 12%: return from Excel weights",EXCEL7.unc12,stats(UNC12W.map(x=>x*100),rf).r,"p"],
+    ["Current: parametric VaR 99% monthly",EXCEL7.pvm.cur,hc.pvm,"p1"],["Recommended: parametric VaR 99% monthly",EXCEL7.pvm.rec,ht.pvm,"p1"],
+    ["Current: months worse than parametric VaR",EXCEL7.below.cur,hc.below,"i"],["Recommended: months worse than parametric VaR",EXCEL7.below.rec,ht.below,"i"]];
+  const f=(x,k)=>k==="p"?pct(x,2):k==="p1"?pct(x,1):k==="i"?String(x):k==="n"?x.toFixed(3):eur(x);
+  let all=true;
+  let r=`<thead><tr><th>Metric</th><th>Excel v7</th><th>Planner</th><th>Difference</th><th>Status</th></tr></thead><tbody>`;
+  rowsV.forEach(([n,e,p,k])=>{const d=p-e;const tol=k==="e"?1:k==="p1"?5e-4:k==="i"?0.5:1e-4;const ok=Math.abs(d)<=tol;all=all&&ok;
+    r+=`<tr><td>${n}</td><td>${f(e,k)}</td><td>${f(p,k)}</td><td>${k==="e"?eur(d):k==="i"?String(d):k==="p1"?(Math.abs(d)<5e-5?"0.00":(d*100).toFixed(2))+" pp":k==="p"?(Math.abs(d)<5e-7?"0.0000":(d*100).toFixed(4))+" pp":(Math.abs(d)<5e-5?"0.0000":d.toFixed(4))}</td><td class="status ${ok?'up':'down'}">${ok?'✓ Match':'✕ Check'}</td></tr>`;});
+  $("tValid").innerHTML=r+"</tbody>";
+  $("valChip").innerHTML=`<span class="chip ${all?'ok':'no'}">${all?L('✓ All '+rowsV.length+' checks match','✓ Los '+rowsV.length+' chequeos cuadran'):L('✕ Differences found','✕ Hay diferencias')}</span>`;
+}
+
+/* ---------- events ---------- */
+const bind=(id,key)=>$(id).addEventListener("input",e=>{const v=parseFloat(e.target.value);if(!isNaN(v)){S[key]=v;render();}});
+bind("iCap","cap");bind("iCon","con");bind("iCar","car");bind("iRf","rf");bind("iSell","sell");
+const bindP=(id,key,num)=>$(id).addEventListener(id.startsWith("p")&&$(id).tagName==="SELECT"?"change":"input",e=>{let v=e.target.value; if(num){v=parseFloat(v); if(isNaN(v)) return;} S.prof[key]=v; if(["risk","loss"].includes(key)&&S.preset!=="rec") setPreset("rec",false); render();});
+bindP("pName","name");bindP("pObj","obj");bindP("pRisk","risk",true);bindP("iLoss","loss",true);bindP("pCcy","ccy");bindP("pFx","fx",true);bindP("pNote","note");bindP("pLiq","liq");
+["gInc","gYrs","gWr","gInf"].forEach(id=>$(id).addEventListener("input",()=>render()));
+["gConf","gGlide","gTax"].forEach(id=>$(id).addEventListener("change",()=>render()));
+$("gRate").addEventListener("input",()=>render());
+$("iYrs").addEventListener("input",e=>{const v=parseInt(e.target.value,10);if(v>=1&&v<=30){S.yrs=v;render();}});
+document.addEventListener("change",e=>{const el=e.target;if(el.classList&&el.classList.contains("wt")){const v=parseFloat(el.value);if(!isNaN(v)){S[el.dataset.k][+el.dataset.i]=v;if(el.dataset.k==="tgt")setPreset("custom",false);render();}}});
+function setPreset(p,apply=true){S.preset=p;document.querySelectorAll("#presetSeg button").forEach(b=>b.classList.toggle("on",b.dataset.p===p));if(apply&&p==="rec"){render();}}
+document.querySelectorAll("#scenSeg button").forEach(b=>b.addEventListener("click",()=>{S.scen=b.dataset.sc;document.querySelectorAll("#scenSeg button").forEach(x=>x.classList.toggle("on",x===b));render();}));
+document.querySelectorAll("#presetSeg button").forEach(b=>b.addEventListener("click",()=>{if(b.dataset.p==="custom"){setPreset("custom",false);showTab("alloc");}else setPreset("rec");}));
+$("reset").addEventListener("click",()=>{S={cap:DEF.cap,con:DEF.con,car:DEF.car,yrs:DEF.yrs,rf:DEF.rf,sell:DEF.sell,cur:DEF.cur.slice(),tgt:DEF.rec.slice(),preset:"rec",prof:{...PDEF},scen:"base"};
+  [["pName","name"],["pObj","obj"],["pRisk","risk"],["iLoss","loss"],["pCcy","ccy"],["pFx","fx"],["pNote","note"],["pLiq","liq"]].forEach(([i,k])=>$(i).value=S.prof[k]);
+  [["iCap","cap"],["iCon","con"],["iCar","car"],["iYrs","yrs"],["iRf","rf"],["iSell","sell"]].forEach(([i,k])=>$(i).value=S[k]);setPreset("rec");document.querySelectorAll("#scenSeg button").forEach(x=>x.classList.toggle("on",x.dataset.sc==="base"));render();});
+function showTab(t){document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t?"true":"false"));
+  document.querySelectorAll("[data-panel]").forEach(p=>p.hidden=p.dataset.panel!==t);
+  try{localStorage.setItem("pp-tab",t)}catch(e){} render();}
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
+const hashTab=location.hash.replace("#","");
+let startTab="overview"; try{startTab=localStorage.getItem("pp-tab")||"overview"}catch(e){}
+if(["overview","front","alloc","plan","risk","goal","valid"].includes(hashTab)) startTab=hashTab;
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",render)}catch(e){}
+new MutationObserver(render).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+try{ if(window.Chart){ Chart.defaults.font.family="IBM Plex Sans"; } }catch(e){}
+function setTheme(t){
+  const r=document.documentElement;
+  if(t==="light"||t==="dark") r.setAttribute("data-theme",t); else r.removeAttribute("data-theme");
+  document.querySelectorAll(".themes button[data-th]").forEach(b=>b.classList.toggle("on",b.dataset.th===(t||"auto")));
+  try{localStorage.setItem("pp-theme",t||"auto")}catch(e){}
+}
+document.querySelectorAll(".themes button[data-th]").forEach(b=>b.addEventListener("click",()=>setTheme(b.dataset.th)));
+try{const t=localStorage.getItem("pp-theme"); if(t&&t!=="auto") setTheme(t);}catch(e){}
+document.querySelectorAll("#langSw button").forEach(b=>b.addEventListener("click",()=>setLang(b.dataset.lg)));
+try{const lg=localStorage.getItem("pp-lang"); if(lg==="es"){ LANG="en"; document.querySelectorAll("#langSw button").forEach(b=>b.classList.toggle("on",b.dataset.lg==="es")); setTimeout(()=>setLang("es"),0);} }catch(e){}
+showTab(startTab);
+</script>
+
+</body></html>
